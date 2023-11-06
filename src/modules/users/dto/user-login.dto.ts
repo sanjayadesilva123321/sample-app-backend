@@ -30,7 +30,7 @@ export class UserLoginDto {
     @IsNotEmpty()
     @IsString()
     @ApiProperty()
-    email: string;
+    username: string;
 
     @IsDefined()
     @IsNotEmpty()

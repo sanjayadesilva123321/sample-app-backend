@@ -98,8 +98,8 @@ export class UsersController {
     @Body() requestBody: UserLoginDto,
     @Res() response: Response) {
       try {
-        const { email, password } = requestBody;
-        const existingUser = await this.usersService.getUserDetailsByEmail(email);
+        const { username, password } = requestBody;
+        const existingUser = await this.usersService.getUserDetailsByEmail(username);
     
         if (!existingUser) {
           return this.mainsService.sendResponse(
@@ -126,7 +126,7 @@ export class UsersController {
           );
           }
           else{
-            const signupResponse = await this.usersService.login(email, password, existingUser);    
+            const signupResponse = await this.usersService.login(username, password, existingUser);    
             return this.mainsService.sendResponse(
               response,
               ResponseMessages.SUCCESS,
