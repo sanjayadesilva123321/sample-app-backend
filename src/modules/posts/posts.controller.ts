@@ -8,6 +8,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import { MainService} from "../../utils/main/main.service";
+import { ListPostsDto } from './dto/get-post.dto';
 
 @ApiTags("Posts")
 @ApiBearerAuth("access-token")
@@ -27,21 +28,28 @@ export class PostsController {
   }
 
   @UseGuards(AuthGuard())
-  @Get()
-  // findAll() {
-  //   return this.postsService.findAll();
-  // }
+  @Get("/list/:roleId")
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
   @ApiResponse({status: 400, description: "Bad Request"})
   @ApiResponse({status: 401, description: "Unauthorized"})
   @ApiResponse({status: 403, description: "Forbidden"})
   @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
-    public async getProcessedIds(
+    public async getPosts(
         @Req() request: Request,
+        @Param() params: ListPostsDto,
         @Res() response: Response
     ) {
       try {
-        return this.postsService.findAll();
+        const syncStatus = await this.postsService.getPosts(
+          params.roleId
+      );
+      return this.mainsService.sendResponse(
+          response,
+          ResponseMessages.SUCCESS,
+          syncStatus,
+          true,
+          ResponseCode.SUCCESS
+      );
       } catch (error) {
         this.logger.log("Error in getting posts in posts controller");
         this.logger.error("Error in posts controller: "+ error)

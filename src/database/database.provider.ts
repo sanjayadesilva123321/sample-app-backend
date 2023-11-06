@@ -3,6 +3,7 @@ import {Sequelize} from "sequelize-typescript";
 import {ConfigService} from "@nestjs/config";
 import {User} from "../models/user";
 import {UserRole} from "../models/user-role";
+import {Role} from "../models/role";
 
 /**
  * OLTP db configuration
@@ -31,7 +32,8 @@ export const DatabaseProvider = [
             );
             sequelize.addModels([
                 User,
-                UserRole
+                UserRole,
+                Role
             ]);
             await sequelize.sync();
             return sequelize;

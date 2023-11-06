@@ -81,7 +81,7 @@ async create(email: string, password: string): Promise<User> {
 
   }
 
-  private generateRoleToken(user: User, userRoles: UserRole[]): String {
+  private generateRoleToken(user: User, userRoles: String[]): String {
     try {
       const token = jwt.sign({ id: user.id, username: user.email, roles: userRoles },
         this.configService.get<string>("JWT_SECRET_KEY"), { expiresIn: '1h' });
@@ -110,9 +110,7 @@ async create(email: string, password: string): Promise<User> {
   async login(email: string, password: string, existingUser: User) {
     try {
       const token = this.generateToken(existingUser);
-      console.log('****user id*****', existingUser.id)
       const userRoles = await this.userRoleService.getUserRoles(existingUser.id);
-      console.log('****Final', JSON.stringify(userRoles))
       const roleToken = this.generateRoleToken(existingUser, userRoles);
       const response ={
         user:{
