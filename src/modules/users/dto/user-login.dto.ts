@@ -25,7 +25,7 @@ import {Transform, Type} from "class-transformer";
  * @param  sourceName
  * @returns object
  */
-export class CreateUserDto {
+export class UserLoginDto {
     @IsDefined()
     @IsNotEmpty()
     @IsString()

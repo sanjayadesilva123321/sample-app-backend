@@ -23,4 +23,5 @@ export const ResponseMessages = {
   DEFAULT_FIELD_CUSTOM_RULE_ADD_ERROR: 'Cannot add rules for a default field',
   INVALID_ACCEPTANCE_CRITERIA: 'Acceptance criteria mismatch',
   USER_ALREADY_EXISTS: 'User already exists',
+  USER_NOT_EXISTS: 'User does not exists.Invalid credentials',
 };

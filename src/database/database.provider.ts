@@ -13,12 +13,12 @@ export const DatabaseProvider = [
         inject: [ConfigService],
         useFactory: async (configService: ConfigService) => {
             const sequelize = new Sequelize(
-                "testdb",
-                "SA",
-                "Ushika@123",
+                configService.get<string>("DATABASE_NAME"),
+                configService.get<string>("DATABASE_USERNAME"),
+                configService.get<string>("DATABASE_PASSWORD"),
                 {
                     dialect: "mssql",
-                    host: "localhost",
+                    host: configService.get<string>("DATABASE_HOST"),
                     port: configService.get<number>("DATABASE_PORT"),
                     logging: false,
                     pool: {

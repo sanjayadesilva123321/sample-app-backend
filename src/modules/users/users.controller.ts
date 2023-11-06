@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Logger} from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
+import {ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Request, Response} from "express";
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
@@ -8,10 +8,10 @@ import { UserRoleService } from '../user-role/user-role.service';
 import { MainService} from "../../utils/main/main.service";
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserLoginDto } from './dto/user-login.dto';
 import { User } from 'src/models/user';
-import { ROLES } from "../../constant/index";
-import { createUserRequestBodyDTO } from "../../dto/user";
 
+@ApiTags("Users")
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService,
@@ -19,11 +19,6 @@ export class UsersController {
     private mainsService: MainService,
     private readonly logger: Logger
 ) {}
-
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.usersService.create(createUserDto);
-  // }
 
   @Get()
   findAll() {
@@ -45,10 +40,15 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
+  @Post("signup")
+  @ApiResponse({status: ResponseCode.CREATED, description: ResponseMessages.CREATED})
+  @ApiResponse({status: 400, description: "Bad Request"})
+  @ApiResponse({status: ResponseCode.DUPLICATE_USER, description: ResponseMessages.USER_ALREADY_EXISTS})
+  @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
   @Post('signup')
   async signUp(
       @Req() request: Request,
-      @Body() requestBody: createUserRequestBodyDTO,
+      @Body() requestBody: CreateUserDto,
       @Res() response: Response
   ){
     try {
@@ -65,23 +65,16 @@ export class UsersController {
           ResponseCode.DUPLICATE_USER
       );
       }
-      const hashedPassword = await this.usersService.hashPassword(password);
-      const user = await this.usersService.create(email, hashedPassword);
-      const userRole = await this.userRoleService.create(user.id, ROLES.USER);
-      const token = this.generateToken(user);
+      const signupResponse = await this.usersService.userSignup(email, password);
   
       return this.mainsService.sendResponse(
         response,
         ResponseMessages.CREATED,
-        {user,
-        ...{
-            token
-        }},
+        signupResponse,
         true,
         ResponseCode.CREATED
     );
     } catch (error: any) {
-      //this.loggerService.logger(LOG_LEVELS.ERROR, "Error in activity log controller: " + error);
       this.logger.log("Error in creating user in user controller");
       this.logger.error("Error in user controller: "+ error)
       this.mainsService.sendResponse(
@@ -94,8 +87,66 @@ export class UsersController {
     }
   }
 
-  private generateToken(user: User): String {
-    const token = jwt.sign({ id: user.id, username: user.email }, 'sample_app_key', { expiresIn: '1h' });
-    return token;
+  @Post("login")
+  @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.SUCCESS})
+  @ApiResponse({status: 400, description: "Bad Request"})
+  @ApiResponse({status: ResponseCode.FORBIDDEN, description: ResponseMessages.USER_NOT_EXISTS})
+  @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
+  @Post('login')
+  async login(
+    @Req() req,
+    @Body() requestBody: UserLoginDto,
+    @Res() response: Response) {
+      try {
+        const { email, password } = requestBody;
+        const existingUser = await this.usersService.getUserDetailsByEmail(email);
+    
+        if (!existingUser) {
+          return this.mainsService.sendResponse(
+            response,
+            ResponseMessages.USER_NOT_EXISTS,
+            null,
+            false,
+            ResponseCode.UNPROCESSABLE_CONTENT,
+            ResponseCode.USER_NOT_EXISTS
+        );
+        }else{
+            const isPasswordValid = await this.usersService.validateUserPassword(
+              password,
+              existingUser.password
+          );
+          if (!isPasswordValid) {
+            return this.mainsService.sendResponse(
+              response,
+              ResponseMessages.USER_NOT_EXISTS,
+              null,
+              false,
+              ResponseCode.UNPROCESSABLE_CONTENT,
+              ResponseCode.USER_NOT_EXISTS
+          );
+          }
+          else{
+            const signupResponse = await this.usersService.login(email, password, existingUser);    
+            return this.mainsService.sendResponse(
+              response,
+              ResponseMessages.SUCCESS,
+              signupResponse,
+              true,
+              ResponseCode.SUCCESS
+          );
+          }
+        }
+
+      } catch (error: any) {
+        this.logger.log("Error in use login in auth controller");
+        this.logger.error("Error in auth controller: "+ error)
+        this.mainsService.sendResponse(
+            response,
+            ResponseMessages.INTERNAL_SERVER_ERROR,
+            error,
+            false,
+            ResponseCode.INTERNAL_SERVER_ERROR
+        );
+      }  
   }
 }

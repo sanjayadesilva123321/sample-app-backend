@@ -12,15 +12,19 @@ export class UserRoleService {
 ) {}
 
 async create(user_id: number, role_id: number): Promise<UserRole> {
-  try {
     return await this.userRoleDal.createUserRole({
         user_id: user_id,
         role_id: role_id
     });
-} catch (error) {
-    //this.loggerService.logger(LOG_LEVELS.ERROR, "Error in activity log service : " + error);
-    throw error;
 }
+
+async getUserRoles(user_id: number): Promise<UserRole[]> {
+  return await this.userRoleDal.findAllByPayload({
+      where: {
+          user_id: user_id,
+      },
+      attributes: ["id","user_id","role_id","permission_id"],
+  });
 }
 
   findAll() {
