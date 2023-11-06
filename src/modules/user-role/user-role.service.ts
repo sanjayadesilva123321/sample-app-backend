@@ -22,7 +22,8 @@ async getUserRoles(user_id: number): Promise<UserRole[]> {
   return await this.userRoleDal.findAllByPayload({
       where: {
           user_id: user_id,
-      },
+      }
+      ,
       attributes: ["id","user_id","role_id","permission_id"],
   });
 }
