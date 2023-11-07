@@ -15,10 +15,16 @@ export class Post extends Model<Post> {
     public id: number;
 
     @Column({
+        type: DataType.STRING,
+        allowNull: false,
+    })
+    public title: string;
+
+    @Column({
         type: DataType.TEXT,
         allowNull: false,
     })
-    public post: string;
+    public content: string;
 
     @Column({
         type: DataType.NUMBER,
