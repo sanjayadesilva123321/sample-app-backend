@@ -9,7 +9,7 @@ import { MainService} from "../../utils/main/main.service";
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserLoginDto } from './dto/user-login.dto';
-import { User } from 'src/models/user';
+import { Public } from '../../auth/decorators/public.decorator';
 
 @ApiTags("Users")
 @Controller('users')
@@ -40,6 +40,7 @@ export class UsersController {
     return this.usersService.remove(+id);
   }
 
+  @Public()
   @Post("signup")
   @ApiResponse({status: ResponseCode.CREATED, description: ResponseMessages.CREATED})
   @ApiResponse({status: 400, description: "Bad Request"})
@@ -87,6 +88,7 @@ export class UsersController {
     }
   }
 
+  @Public()
   @Post("login")
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.SUCCESS})
   @ApiResponse({status: 400, description: "Bad Request"})

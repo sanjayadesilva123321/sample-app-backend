@@ -11,6 +11,7 @@ import { MainService} from "../../utils/main/main.service";
 import { ListPostsDto } from './dto/get-post.dto';
 import { UpdatePostParamsDto } from './dto/update-post-params.dto';
 import { AuthGuard } from '../../auth/auth.guard';
+import { Public } from '../../auth/decorators/public.decorator';
 
 @ApiTags("Posts")
 @ApiBearerAuth("access-token")
@@ -29,7 +30,7 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Get("/list/:roleId")
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
   @ApiResponse({status: 400, description: "Bad Request"})
@@ -71,7 +72,7 @@ export class PostsController {
     return this.postsService.findOne(+id);
   }
 
-  @UseGuards(AuthGuard)
+  //@UseGuards(AuthGuard)
   @Patch(':id')
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
   @ApiResponse({status: 400, description: "Bad Request"})
