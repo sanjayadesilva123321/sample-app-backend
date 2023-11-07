@@ -9,6 +9,7 @@ import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import { MainService} from "../../utils/main/main.service";
 import { ListPostsDto } from './dto/get-post.dto';
+import { UpdatePostParamsDto } from './dto/update-post-params.dto';
 
 @ApiTags("Posts")
 @ApiBearerAuth("access-token")
@@ -69,9 +70,41 @@ export class PostsController {
     return this.postsService.findOne(+id);
   }
 
+  @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
+  @ApiResponse({status: 400, description: "Bad Request"})
+  @ApiResponse({status: 401, description: "Unauthorized"})
+  @ApiResponse({status: 403, description: "Forbidden"})
+  @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+  public async update(
+    @Req() request: Request,
+    @Param() params: UpdatePostParamsDto,
+    @Body() requestBody: UpdatePostDto,
+    @Res() response: Response
+    ) {
+      try {
+        const { title, content } = requestBody;
+        const updateStatus = await this.postsService.updatePost(
+          params.id, title, content
+      );
+      return this.mainsService.sendResponse(
+          response,
+          ResponseMessages.SUCCESS,
+          updateStatus,
+          true,
+          ResponseCode.SUCCESS
+      );
+      } catch (error) {
+        this.logger.log("Error in updating post in posts controller");
+        this.logger.error("Error in posts controller: "+ error)
+        this.mainsService.sendResponse(
+            response,
+            ResponseMessages.INTERNAL_SERVER_ERROR,
+            error,
+            false,
+            ResponseCode.INTERNAL_SERVER_ERROR
+        );
+      }
   }
 
   @Delete(':id')

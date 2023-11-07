@@ -25,8 +25,28 @@ export class PostsService {
     return `This action returns a #${id} post`;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async updatePost(id: number, title, content) {
+    try {
+      const post = await this.postDal.findOne(id);
+
+      if (!post) {
+        throw new Error('Post not found');
+      }
+      const [rowsUpdated, [updatedPost]] = await Post.update({'title': title, 'content': content}, {
+        where: { id: id },
+        returning: true,
+      });
+  
+      if (rowsUpdated !== 1 || !updatedPost) {
+        throw new Error('Post not found or not updated');
+      }    
+      return updatedPost;
+    
+    } catch (error) {
+      this.logger.error("Error occured :updatePosts in post service: "+ error)
+      throw error;
+    }
+
   }
 
   remove(id: number) {

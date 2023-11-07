@@ -2,7 +2,8 @@ import {Table, Column, Model, DataType, Sequelize} from "sequelize-typescript";
 
 @Table({
     tableName: "post",
-    timestamps: true,
+    timestamps: false,
+
 })
 export class Post extends Model<Post> {
     @Column({
@@ -28,13 +29,13 @@ export class Post extends Model<Post> {
 
     @Column({
         type: DataType.NUMBER,
-        allowNull: false,
+        allowNull: true,
     })
     public created_by: number;
 
     @Column({
         type: DataType.NUMBER,
-        allowNull: false,
+        allowNull: true,
     })
     public updated_by: number;
 

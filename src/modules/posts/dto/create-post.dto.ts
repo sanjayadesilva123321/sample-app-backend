@@ -1,1 +1,2 @@
-export class CreatePostDto {}
+export class CreatePostDto {
+}
