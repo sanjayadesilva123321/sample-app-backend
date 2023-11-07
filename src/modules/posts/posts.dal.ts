@@ -20,9 +20,9 @@ export class PostDal{
     }
 
     /**
-     * Find user by payload
+     * Find post by payload
      * @param payload
-     * @returns user object
+     * @returns post object
      */
     async findOne(payload: any) {
         try {
@@ -32,4 +32,13 @@ export class PostDal{
             throw error;
         }
     }
+
+    /**
+     * Delete post record by given condition
+     * @param condition
+     * @returns deleted record details
+     */
+        async delete(condition: any) {
+            return this.postRepository.destroy({where: condition});
+        }
 }

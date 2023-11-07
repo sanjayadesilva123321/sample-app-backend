@@ -111,7 +111,33 @@ export class PostsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+  @ApiResponse({status: 200, description: "Delete successfully"})
+  @ApiResponse({status: 401, description: "Unauthorized"})
+  @ApiResponse({status: 500, description: "Internal server error"})
+  public async deletePost(
+      @Req() request: Request,
+      @Param() params: UpdatePostParamsDto,
+      @Res() response: Response
+  ) {
+      try {
+          await this.postsService.removePost(params.id);
+
+          return this.mainsService.sendResponse(
+              response,
+              ResponseMessages.DELETE_SUCCESS,
+              {},
+              true,
+              ResponseCode.SUCCESS
+          );
+      } catch (error: any) {
+          this.logger.error("Error in post controller: " + error);
+          return this.mainsService.sendResponse(
+              response,
+              ResponseMessages.INTERNAL_SERVER_ERROR,
+              error,
+              false,
+              ResponseCode.INTERNAL_SERVER_ERROR
+          );
+      }
   }
 }

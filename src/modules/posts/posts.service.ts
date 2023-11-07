@@ -49,8 +49,27 @@ export class PostsService {
 
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async removePost(id: number) {
+    try {
+      const postData: any = await this.postDal.findOne({
+        where: {
+          id: id,
+      }
+      });
+      //console.log(postData.title);
+      if (!postData) {
+          this.logger.error(
+              "Error in post service : post not found"
+          );
+          throw Error("Cannot find the post");
+      }
+
+      await this.postDal.delete({id:id})
+
+    } catch (error: any) {
+        this.logger.error("Error in post service : " + error);
+        throw Error(error);
+    }
   }
 
   async getPosts(roleId) {
