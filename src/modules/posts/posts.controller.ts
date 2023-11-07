@@ -1,5 +1,5 @@
 import { UseGuards, Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Logger } from '@nestjs/common';
-import {AuthGuard} from "@nestjs/passport";
+//import {AuthGuard} from "@nestjs/passport";
 import {ApiResponse, ApiTags, ApiBearerAuth, ApiHeader} from "@nestjs/swagger";
 import {Request, Response} from "express";
 import { PostsService } from './posts.service';
@@ -10,6 +10,7 @@ import {ResponseCode} from "../../configs/response.codes";
 import { MainService} from "../../utils/main/main.service";
 import { ListPostsDto } from './dto/get-post.dto';
 import { UpdatePostParamsDto } from './dto/update-post-params.dto';
+import { AuthGuard } from '../../auth/auth.guard';
 
 @ApiTags("Posts")
 @ApiBearerAuth("access-token")
@@ -28,7 +29,7 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
-  //@UseGuards(AuthGuard())
+  @UseGuards(AuthGuard)
   @Get("/list/:roleId")
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
   @ApiResponse({status: 400, description: "Bad Request"})
@@ -70,12 +71,13 @@ export class PostsController {
     return this.postsService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
+  @Patch(':id')
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
   @ApiResponse({status: 400, description: "Bad Request"})
   @ApiResponse({status: 401, description: "Unauthorized"})
   @ApiResponse({status: 403, description: "Forbidden"})
-  @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
-  @Patch(':id')
+  @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})  
   public async update(
     @Req() request: Request,
     @Param() params: UpdatePostParamsDto,

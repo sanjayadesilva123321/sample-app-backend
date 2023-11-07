@@ -10,5 +10,6 @@ import { UserRoleDal } from "../user-role/user-role.dal";
 @Module({
   controllers: [UsersController],
   providers: [...UserProvider, UsersService, UserDal, UserRoleService, UserRoleDal, MainService, Logger],
+  exports: [UsersService],
 })
 export class UsersModule {}
