@@ -1,10 +1,10 @@
 import {Inject, Injectable} from "@nestjs/common";
-import {USER_REPOSITORY} from "../../constant/index";
-import {User} from "../../models/user";
+import {POST_REPOSITORY} from "../../constant/index";
+import {Post} from "../../models/post";
 
 @Injectable()
 export class PostDal{
-    constructor(@Inject(USER_REPOSITORY) private readonly userRepository: typeof User) {}
+    constructor(@Inject(POST_REPOSITORY) private readonly postRepository: typeof Post) {}
 
     /**
      * Find all user details by payload
@@ -12,7 +12,7 @@ export class PostDal{
      */
     async findAllByPayload(payload: any) {
         try {
-            return await this.userRepository.findAll(payload);
+            return await this.postRepository.findAll(payload);
         } catch (error) {
             console.log(error);
             throw error;
@@ -26,14 +26,10 @@ export class PostDal{
      */
     async findOne(payload: any) {
         try {
-            return await this.userRepository.findOne(payload);
+            return await this.postRepository.findOne(payload);
         } catch (error) {
             console.log(error);
             throw error;
         }
-    }
-
-    async createUser(payload: any) {
-        return this.userRepository.create(payload);
     }
 }

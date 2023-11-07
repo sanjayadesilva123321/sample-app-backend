@@ -27,7 +27,7 @@ export class PostsController {
     return this.postsService.create(createPostDto);
   }
 
-  @UseGuards(AuthGuard())
+  //@UseGuards(AuthGuard())
   @Get("/list/:roleId")
   @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
   @ApiResponse({status: 400, description: "Bad Request"})

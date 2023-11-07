@@ -28,7 +28,7 @@ import {Transform, Type} from "class-transformer";
 export class ListPostsDto {
     @IsDefined()
     @IsNotEmpty()
-    @IsString()
+    @IsNumber()
     @ApiProperty()
     roleId: number;
 }
