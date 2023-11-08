@@ -56,7 +56,6 @@ export class PostsService {
           id: id,
       }
       });
-      //console.log(postData.title);
       if (!postData) {
           this.logger.error(
               "Error in post service : post not found"
