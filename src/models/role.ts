@@ -25,5 +25,4 @@ export class Role extends Model<Role> {
         allowNull: false,
     })
     public status: number;
-
 }

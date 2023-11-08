@@ -5,5 +5,5 @@ export const PostProvider = [
     {
         provide: POST_REPOSITORY,
         useValue: Post,
-    }
+    },
 ];

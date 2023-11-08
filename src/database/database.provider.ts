@@ -31,12 +31,7 @@ export const DatabaseProvider = [
                     },
                 }
             );
-            sequelize.addModels([
-                User,
-                UserRole,
-                Role,
-                Post
-            ]);
+            sequelize.addModels([User, UserRole, Role, Post]);
             await sequelize.sync();
             return sequelize;
         },

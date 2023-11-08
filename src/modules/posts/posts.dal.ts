@@ -3,7 +3,7 @@ import {POST_REPOSITORY} from "../../constant/index";
 import {Post} from "../../models/post";
 
 @Injectable()
-export class PostDal{
+export class PostDal {
     constructor(@Inject(POST_REPOSITORY) private readonly postRepository: typeof Post) {}
 
     /**
@@ -38,7 +38,7 @@ export class PostDal{
      * @param condition
      * @returns deleted record details
      */
-        async delete(condition: any) {
-            return this.postRepository.destroy({where: condition});
-        }
+    async delete(condition: any) {
+        return this.postRepository.destroy({where: condition});
+    }
 }

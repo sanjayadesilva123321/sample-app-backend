@@ -25,5 +25,4 @@ export class User extends Model<User> {
         allowNull: false,
     })
     public password: string;
-
 }

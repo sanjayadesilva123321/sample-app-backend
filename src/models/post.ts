@@ -3,7 +3,6 @@ import {Table, Column, Model, DataType, Sequelize} from "sequelize-typescript";
 @Table({
     tableName: "post",
     timestamps: false,
-
 })
 export class Post extends Model<Post> {
     @Column({
@@ -38,5 +37,4 @@ export class Post extends Model<Post> {
         allowNull: true,
     })
     public updated_by: number;
-
 }
