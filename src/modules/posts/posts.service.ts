@@ -1,9 +1,10 @@
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {CreatePostDto} from "./dto/create-post.dto";
-import {UpdatePostDto} from "./dto/update-post.dto";
 import {PostDal} from "./posts.dal";
 import {POST_REPOSITORY} from "../../constant/index";
 import {Post} from "../../models/post";
+import {UserRole} from "../../models/user-role";
+import { Sequelize } from "sequelize";
 
 @Injectable()
 export class PostsService {
@@ -69,11 +70,29 @@ export class PostsService {
         }
     }
 
-    async getPosts(roleId) {
+    async getPosts(roleId: number) {
         try {
-            return await this.postDal.findAllByPayload({
-                created_by: 10006,
-            });
+            Post.belongsTo(UserRole, {
+    foreignKey: 'created_by', // Indicates the foreign key in the Post model
+    targetKey: 'user_id', // Indicates the target key in the UserRole model
+    as: 'userRoleAssociation' // Alias for the association, you can use this in the include
+  });
+  
+           return await this.postDal.findAllByPayload({
+                include: [
+                  {
+                    model: UserRole,
+                    as: 'userRoleAssociation',
+                    where: {
+                      //user_id: Sequelize.col('post.created_by'),
+                      role_id: roleId
+                    },
+                    attributes: ['user_id'] // To exclude UserRole fields from result except 'user_id'
+                  }
+                ],
+                where: {},
+                attributes: ['id', 'title', 'content'] // Add fields you want to retrieve from the Post model
+              })
         } catch (error) {
             this.logger.error("Error occured :getPosts in post service: " + error);
             throw error;

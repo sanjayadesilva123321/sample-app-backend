@@ -1,4 +1,5 @@
-import {Table, Column, Model, DataType, Sequelize} from "sequelize-typescript";
+import {Table, Column, Model, DataType, ForeignKey} from "sequelize-typescript";
+import {User} from "../models/user";
 
 @Table({
     tableName: "post",
@@ -26,6 +27,7 @@ export class Post extends Model<Post> {
     })
     public content: string;
 
+    @ForeignKey(() => User)
     @Column({
         type: DataType.NUMBER,
         allowNull: true,

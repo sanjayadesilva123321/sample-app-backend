@@ -86,7 +86,7 @@ export class UsersService {
         try {
             const token = jwt.sign(
                 {id: user.id, username: user.email, roles: userRoles},
-                this.configService.get<string>("JWT_SECRET_KEY"),
+                this.configService.get<string>("ROLE_TOKEN_SECRET"),
                 {expiresIn: "1h"}
             );
             return token;

@@ -12,6 +12,8 @@ import {ListPostsDto} from "./dto/get-post.dto";
 import {UpdatePostParamsDto} from "./dto/update-post-params.dto";
 import {AuthGuard} from "../../auth/auth.guard";
 import {Public} from "../../auth/decorators/public.decorator";
+import {Roles} from "../../auth/decorators/roles.decorator";
+import { Role } from '../../auth/role.enum';
 
 @ApiTags("Posts")
 @ApiBearerAuth("access-token")
@@ -33,6 +35,7 @@ export class PostsController {
     }
 
     //@UseGuards(AuthGuard)
+    @Roles(Role.Admin, Role.Manager) 
     @Get("/list/:roleId")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
     @ApiResponse({status: 400, description: "Bad Request"})
@@ -40,7 +43,7 @@ export class PostsController {
     @ApiResponse({status: 403, description: "Forbidden"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     public async getPosts(@Req() request: Request, @Param() params: ListPostsDto, @Res() response: Response) {
-        try {
+        try {    
             const syncStatus = await this.postsService.getPosts(params.roleId);
             return this.mainsService.sendResponse(
                 response,
@@ -68,6 +71,7 @@ export class PostsController {
     }
 
     //@UseGuards(AuthGuard)
+    @Roles(Role.Admin, Role.Manager)
     @Patch(":id")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
     @ApiResponse({status: 400, description: "Bad Request"})
@@ -103,6 +107,7 @@ export class PostsController {
         }
     }
 
+    @Roles(Role.Admin, Role.Manager)
     @Delete(":id")
     @ApiResponse({status: 200, description: "Delete successfully"})
     @ApiResponse({status: 401, description: "Unauthorized"})
