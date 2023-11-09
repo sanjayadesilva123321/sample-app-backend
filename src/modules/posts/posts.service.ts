@@ -3,8 +3,10 @@ import {CreatePostDto} from "./dto/create-post.dto";
 import {PostDal} from "./posts.dal";
 import {POST_REPOSITORY} from "../../constant/index";
 import {Post} from "../../models/post";
+import {User} from "../../models/user";
 import {UserRole} from "../../models/user-role";
 import { Sequelize } from "sequelize";
+import { Role } from '../../auth/role.enum'
 
 @Injectable()
 export class PostsService {
@@ -70,29 +72,27 @@ export class PostsService {
         }
     }
 
-    async getPosts(roleId: number) {
+    async getPosts(role : string) {
         try {
-            Post.belongsTo(UserRole, {
-    foreignKey: 'created_by', // Indicates the foreign key in the Post model
-    targetKey: 'user_id', // Indicates the target key in the UserRole model
-    as: 'userRoleAssociation' // Alias for the association, you can use this in the include
-  });
-  
-           return await this.postDal.findAllByPayload({
+            if(role === Role.Admin){
+                return await this.postDal.findAllByPayload({});
+            }if(role=== Role.Manager){
+            return await this.postDal.findAllByPayload({
                 include: [
                   {
-                    model: UserRole,
-                    as: 'userRoleAssociation',
+                    model: User,
                     where: {
-                      //user_id: Sequelize.col('post.created_by'),
-                      role_id: roleId
+                      role_id: 2
                     },
-                    attributes: ['user_id'] // To exclude UserRole fields from result except 'user_id'
+                    attributes: []
                   }
                 ],
                 where: {},
-                attributes: ['id', 'title', 'content'] // Add fields you want to retrieve from the Post model
+                attributes: ['id', 'title', 'content']
               })
+            }else{
+                return null
+            }
         } catch (error) {
             this.logger.error("Error occured :getPosts in post service: " + error);
             throw error;

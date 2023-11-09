@@ -14,9 +14,11 @@ import {AuthGuard} from "../../auth/auth.guard";
 import {Public} from "../../auth/decorators/public.decorator";
 import {Roles} from "../../auth/decorators/roles.decorator";
 import { Role } from '../../auth/role.enum';
+import { jwtDecode } from "jwt-decode";
+import {HelpersService} from "../../helpers/helpers.service";
 
 @ApiTags("Posts")
-@ApiBearerAuth("access-token")
+@ApiBearerAuth()
 @ApiHeader({
     name: "role-token",
     description: "Role Token",
@@ -26,7 +28,8 @@ export class PostsController {
     constructor(
         private readonly postsService: PostsService,
         private readonly logger: Logger,
-        private mainsService: MainService
+        private mainsService: MainService,
+        private helperService : HelpersService
     ) {}
 
     @Post()
@@ -34,17 +37,19 @@ export class PostsController {
         return this.postsService.create(createPostDto);
     }
 
-    //@UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @Roles(Role.Admin, Role.Manager) 
-    @Get("/list/:roleId")
+    @Get("")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
     @ApiResponse({status: 400, description: "Bad Request"})
     @ApiResponse({status: 401, description: "Unauthorized"})
     @ApiResponse({status: 403, description: "Forbidden"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
-    public async getPosts(@Req() request: Request, @Param() params: ListPostsDto, @Res() response: Response) {
-        try {    
-            const syncStatus = await this.postsService.getPosts(params.roleId);
+    public async getPosts(@Req() request: Request, @Res() response: Response) {
+        try {
+            const roleToken: any = request.headers['role-token'];
+            const user: any = await this.helperService.decodeJWTToken(roleToken);
+            const syncStatus = await this.postsService.getPosts(user.roles[0]);
             return this.mainsService.sendResponse(
                 response,
                 ResponseMessages.SUCCESS,
@@ -107,7 +112,7 @@ export class PostsController {
         }
     }
 
-    @Roles(Role.Admin, Role.Manager)
+    @Roles(Role.Admin)
     @Delete(":id")
     @ApiResponse({status: 200, description: "Delete successfully"})
     @ApiResponse({status: 401, description: "Unauthorized"})

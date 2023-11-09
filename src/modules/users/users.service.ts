@@ -51,15 +51,16 @@ export class UsersService {
         try {
             const hashedPassword = await this.hashPassword(password);
             const user = await this.create(email, hashedPassword);
-            const userRole = await this.userRoleService.create(user.id, ROLES.USER);
+            //const userRole = await this.userRoleService.create(user.id, ROLES.USER);
             const response = {
                 user: {
                     id: user.id,
                     email: user.email,
-                },
-                ...{
-                    role: userRole,
-                },
+                }
+                // ,
+                // ...{
+                //     role: userRole,
+                // },
             };
             return response;
         } catch (error) {
@@ -101,7 +102,7 @@ export class UsersService {
             where: {
                 email: email,
             },
-            attributes: ["id", "email", "password"],
+            attributes: ["id", "email", "password","role_id"],
         });
     }
 
@@ -114,7 +115,9 @@ export class UsersService {
     async login(email: string, password: string, existingUser: User) {
         try {
             const token = this.generateToken(existingUser);
-            const userRoles = await this.userRoleService.getUserRoles(existingUser.id);
+            //const userRoles = await this.userRoleService.getUserRoles(existingUser.id);
+            const userRoles = await this.userRoleService.getUserRoles(existingUser.role_id);
+            console.log('userRoles',userRoles);
             const roleToken = this.generateRoleToken(existingUser, userRoles);
             const response = {
                 user: {

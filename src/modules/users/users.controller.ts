@@ -140,4 +140,53 @@ export class UsersController {
             );
         }
     }
+
+    // @Get("roles-data")
+    // async getUserData(@Req() req, @Res() response: Response) {
+    //     try {
+    //         const UserRole = await this.usersService.getUserRoleData(email);
+
+    //         if (!existingUser) {
+    //             return this.mainsService.sendResponse(
+    //                 response,
+    //                 ResponseMessages.USER_NOT_EXISTS,
+    //                 null,
+    //                 false,
+    //                 ResponseCode.UNPROCESSABLE_CONTENT,
+    //                 ResponseCode.USER_NOT_EXISTS
+    //             );
+    //         } else {
+    //             const isPasswordValid = await this.usersService.validateUserPassword(password, existingUser.password);
+    //             if (!isPasswordValid) {
+    //                 return this.mainsService.sendResponse(
+    //                     response,
+    //                     ResponseMessages.USER_NOT_EXISTS,
+    //                     null,
+    //                     false,
+    //                     ResponseCode.UNPROCESSABLE_CONTENT,
+    //                     ResponseCode.USER_NOT_EXISTS
+    //                 );
+    //             } else {
+    //                 const signupResponse = await this.usersService.login(email, password, existingUser);
+    //                 return this.mainsService.sendResponse(
+    //                     response,
+    //                     ResponseMessages.SUCCESS,
+    //                     signupResponse,
+    //                     true,
+    //                     ResponseCode.SUCCESS
+    //                 );
+    //             }
+    //         }
+    //     } catch (error: any) {
+    //         this.logger.log("Error in use login in auth controller");
+    //         this.logger.error("Error in auth controller: " + error);
+    //         this.mainsService.sendResponse(
+    //             response,
+    //             ResponseMessages.INTERNAL_SERVER_ERROR,
+    //             error,
+    //             false,
+    //             ResponseCode.INTERNAL_SERVER_ERROR
+    //         );
+    //     }
+    // }
 }

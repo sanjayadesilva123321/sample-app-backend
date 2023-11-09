@@ -5,7 +5,6 @@ import {PostsModule} from "./modules/posts/posts.module";
 import {UsersModule} from "./modules/users/users.module";
 import {UserRoleModule} from "./modules/user-role/users-role.module";
 import {AuthModule} from "./auth/auth.module";
-import {UserMiddleware } from './common/user.middleware';
 @Module({
     imports: [
         ConfigModule.forRoot({
@@ -21,10 +20,3 @@ import {UserMiddleware } from './common/user.middleware';
     providers: [],
 })
 export class AppModule {}
-// export class AppModule implements NestModule {
-//     configure(consumer: MiddlewareConsumer) {
-//       consumer
-//         .apply(UserMiddleware)
-//         .forRoutes({ path: 'posts/list/*', method: RequestMethod.GET });
-//     }
-// }

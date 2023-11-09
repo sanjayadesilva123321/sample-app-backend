@@ -18,13 +18,30 @@ export class UserRoleService {
         });
     }
 
-    async getUserRoles(user_id: number): Promise<String[]> {
-        const userRoles = await UserRole.findAll({
-            where: {user_id},
-            include: [{model: Role}],
+    async getUserRoles(role_id: number): Promise<String[]> {
+        const role = await Role.findOne({
+            where: {id:role_id},
         });
-        return userRoles.map(userRole => userRole.role.role);
+        const userRoles =[role.role];
+        return userRoles;
     }
+
+    // async getUserRolesByUser(user_id: number): Promise<String[]> {
+    //     const userRoles = await Role.findOne({
+    //         where: {user_id},
+    //         include: [{model: Role}],
+    //     });
+    //     const userRoles =[role.role];
+    //     return userRoles;
+    // }
+
+    // async getUserRoles(user_id: number): Promise<String[]> {
+    //     const userRoles = await UserRole.findAll({
+    //         where: {user_id},
+    //         include: [{model: Role}],
+    //     });
+    //     return userRoles.map(userRole => userRole.role.role);
+    // }
 
     findAll() {
         return `This action returns all users`;

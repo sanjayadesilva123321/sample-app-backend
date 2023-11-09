@@ -1,4 +1,4 @@
-import {Table, Column, Model, DataType, ForeignKey} from "sequelize-typescript";
+import {Table, Column, Model, DataType, ForeignKey, BelongsTo} from "sequelize-typescript";
 import {User} from "../models/user";
 
 @Table({
@@ -39,4 +39,8 @@ export class Post extends Model<Post> {
         allowNull: true,
     })
     public updated_by: number;
+
+    // Define the association
+    @BelongsTo(() => User)
+    user: User;
 }
