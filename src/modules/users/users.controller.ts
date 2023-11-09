@@ -26,10 +26,11 @@ export class UsersController {
         return this.usersService.findAll();
     }
 
-    @Get(":id")
-    findOne(@Param("id") id: string) {
-        return this.usersService.findOne(+id);
-    }
+    // @Get("/:id")
+    // findOne(@Param("id") id: string) {
+    //     console.log('dddd')
+    //     return this.usersService.findOne(+id);
+    // }
 
     @Patch(":id")
     update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
@@ -86,7 +87,6 @@ export class UsersController {
     }
 
     @Public()
-    @Post("login")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.SUCCESS})
     @ApiResponse({status: 400, description: "Bad Request"})
     @ApiResponse({status: ResponseCode.FORBIDDEN, description: ResponseMessages.USER_NOT_EXISTS})
@@ -141,52 +141,31 @@ export class UsersController {
         }
     }
 
-    // @Get("roles-data")
-    // async getUserData(@Req() req, @Res() response: Response) {
-    //     try {
-    //         const UserRole = await this.usersService.getUserRoleData(email);
-
-    //         if (!existingUser) {
-    //             return this.mainsService.sendResponse(
-    //                 response,
-    //                 ResponseMessages.USER_NOT_EXISTS,
-    //                 null,
-    //                 false,
-    //                 ResponseCode.UNPROCESSABLE_CONTENT,
-    //                 ResponseCode.USER_NOT_EXISTS
-    //             );
-    //         } else {
-    //             const isPasswordValid = await this.usersService.validateUserPassword(password, existingUser.password);
-    //             if (!isPasswordValid) {
-    //                 return this.mainsService.sendResponse(
-    //                     response,
-    //                     ResponseMessages.USER_NOT_EXISTS,
-    //                     null,
-    //                     false,
-    //                     ResponseCode.UNPROCESSABLE_CONTENT,
-    //                     ResponseCode.USER_NOT_EXISTS
-    //                 );
-    //             } else {
-    //                 const signupResponse = await this.usersService.login(email, password, existingUser);
-    //                 return this.mainsService.sendResponse(
-    //                     response,
-    //                     ResponseMessages.SUCCESS,
-    //                     signupResponse,
-    //                     true,
-    //                     ResponseCode.SUCCESS
-    //                 );
-    //             }
-    //         }
-    //     } catch (error: any) {
-    //         this.logger.log("Error in use login in auth controller");
-    //         this.logger.error("Error in auth controller: " + error);
-    //         this.mainsService.sendResponse(
-    //             response,
-    //             ResponseMessages.INTERNAL_SERVER_ERROR,
-    //             error,
-    //             false,
-    //             ResponseCode.INTERNAL_SERVER_ERROR
-    //         );
-    //     }
-    // }
+    @Public()
+    @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.SUCCESS})
+    @ApiResponse({status: 400, description: "Bad Request"})
+    @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
+    @Get("roles")
+    async getUserData(@Req() request: Request, @Res() response: Response) {
+        try {
+            const userRole = await this.usersService.getUserRoleData(request.headers.authorization);
+            return this.mainsService.sendResponse(
+                response,
+                ResponseMessages.SUCCESS,
+                userRole,
+                true,
+                ResponseCode.SUCCESS
+            );
+        } catch (error: any) {
+            this.logger.log("Error in use login in auth controller");
+            this.logger.error("Error in auth controller: " + error);
+            this.mainsService.sendResponse(
+                response,
+                ResponseMessages.INTERNAL_SERVER_ERROR,
+                error,
+                false,
+                ResponseCode.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
 }

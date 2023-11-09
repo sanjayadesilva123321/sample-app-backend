@@ -1,7 +1,6 @@
-import {Table, Column, Model, DataType, Sequelize, ForeignKey, HasMany} from "sequelize-typescript";
+import {Table, Column, Model, DataType, Sequelize, ForeignKey, HasMany, HasOne, BelongsTo} from "sequelize-typescript";
 import {Role} from "../models/role";
 import {Post} from "../models/post";
-
 @Table({
     tableName: "user",
     timestamps: true,
@@ -39,4 +38,8 @@ export class User extends Model<User> {
     // Define the association
     @HasMany(() => Post)
     posts: Post[];
+
+    // Define the association
+    @BelongsTo(() => Role)
+    role: Role;
 }

@@ -9,6 +9,9 @@ import {UserDal} from "./users.dal";
 import {ROLES} from "../../constant/index";
 import {UserRoleService} from "../user-role/user-role.service";
 import {UserRole} from "src/models/user-role";
+import {HelpersService} from "../../helpers/helpers.service";
+import {Role} from "../../models/role";
+
 @Injectable()
 export class UsersService {
     constructor(
@@ -16,7 +19,8 @@ export class UsersService {
         @Inject(USER_REPOSITORY) private userRepository: typeof User,
         private userDal: UserDal,
         private readonly configService: ConfigService,
-        private readonly logger: Logger
+        private readonly logger: Logger,
+        private helperService : HelpersService,
     ) {}
 
     async create(email: string, password: string): Promise<User> {
@@ -117,7 +121,6 @@ export class UsersService {
             const token = this.generateToken(existingUser);
             //const userRoles = await this.userRoleService.getUserRoles(existingUser.id);
             const userRoles = await this.userRoleService.getUserRoles(existingUser.role_id);
-            console.log('userRoles',userRoles);
             const roleToken = this.generateRoleToken(existingUser, userRoles);
             const response = {
                 user: {
@@ -143,5 +146,22 @@ export class UsersService {
             this.logger.error("Error occured :validateUserPassword in user service: " + error);
             throw error;
         }
+    }
+
+    async getUserRoleData(authtoken: string): Promise<any> {
+        const user: any = await this.helperService.decodeJWTToken(authtoken);
+        return await Role.findAll({
+            include: [
+              {
+                model: User,
+                where: {
+                  id: user.id
+                },
+                attributes: []
+              }
+            ],
+            where: {},
+            attributes: ['id', 'role']
+          });
     }
 }

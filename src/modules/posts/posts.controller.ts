@@ -14,7 +14,6 @@ import {AuthGuard} from "../../auth/auth.guard";
 import {Public} from "../../auth/decorators/public.decorator";
 import {Roles} from "../../auth/decorators/roles.decorator";
 import { Role } from '../../auth/role.enum';
-import { jwtDecode } from "jwt-decode";
 import {HelpersService} from "../../helpers/helpers.service";
 
 @ApiTags("Posts")

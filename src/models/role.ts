@@ -1,4 +1,5 @@
-import {Table, Column, Model, DataType, Sequelize} from "sequelize-typescript";
+import {Table, Column, Model, DataType, Sequelize, HasMany} from "sequelize-typescript";
+import {User} from "../models/user";
 
 @Table({
     tableName: "role",
@@ -25,4 +26,8 @@ export class Role extends Model<Role> {
         allowNull: false,
     })
     public status: number;
+
+    // Define the association
+    @HasMany(() => User)
+    users: User[];
 }
