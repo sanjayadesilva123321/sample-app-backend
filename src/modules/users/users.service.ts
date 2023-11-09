@@ -6,9 +6,7 @@ import {USER_REPOSITORY} from "../../constant/index";
 import {UpdateUserDto} from "./dto/update-user.dto";
 import {User} from "../../models/user";
 import {UserDal} from "./users.dal";
-import {ROLES} from "../../constant/index";
 import {UserRoleService} from "../user-role/user-role.service";
-import {UserRole} from "src/models/user-role";
 import {HelpersService} from "../../helpers/helpers.service";
 import {Role} from "../../models/role";
 
@@ -73,7 +71,7 @@ export class UsersService {
         }
     }
 
-    private generateToken(user: User): String {
+    private generateToken(user: User): string {
         try {
             const token = jwt.sign(
                 {id: user.id, username: user.email},
@@ -87,7 +85,7 @@ export class UsersService {
         }
     }
 
-    private generateRoleToken(user: User, userRoles: String[]): String {
+    private generateRoleToken(user: User, userRoles: string[]): string {
         try {
             const token = jwt.sign(
                 {id: user.id, username: user.email, roles: userRoles},
@@ -161,7 +159,7 @@ export class UsersService {
               }
             ],
             where: {},
-            attributes: ['id', 'role']
+            attributes: ['role']
           });
     }
 }

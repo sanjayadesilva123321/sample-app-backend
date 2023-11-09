@@ -4,8 +4,6 @@ import {PostDal} from "./posts.dal";
 import {POST_REPOSITORY} from "../../constant/index";
 import {Post} from "../../models/post";
 import {User} from "../../models/user";
-import {UserRole} from "../../models/user-role";
-import { Sequelize } from "sequelize";
 import { Role } from '../../auth/role.enum'
 
 @Injectable()

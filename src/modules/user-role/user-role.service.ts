@@ -18,7 +18,7 @@ export class UserRoleService {
         });
     }
 
-    async getUserRoles(role_id: number): Promise<String[]> {
+    async getUserRoles(role_id: number): Promise<string[]> {
         const role = await Role.findOne({
             where: {id:role_id},
         });

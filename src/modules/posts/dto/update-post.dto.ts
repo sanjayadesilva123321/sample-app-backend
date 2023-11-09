@@ -14,5 +14,5 @@ export class UpdatePostDto extends PartialType(CreatePostDto) {
     @IsNotEmpty()
     @IsAlphanumeric()
     @ApiProperty()
-    content: String;
+    content: string;
 }

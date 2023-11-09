@@ -1,5 +1,4 @@
 import {UseGuards, Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Logger} from "@nestjs/common";
-//import {AuthGuard} from "@nestjs/passport";
 import {ApiResponse, ApiTags, ApiBearerAuth, ApiHeader} from "@nestjs/swagger";
 import {Request, Response} from "express";
 import {PostsService} from "./posts.service";
@@ -8,10 +7,8 @@ import {UpdatePostDto} from "./dto/update-post.dto";
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import {MainService} from "../../utils/main/main.service";
-import {ListPostsDto} from "./dto/get-post.dto";
 import {UpdatePostParamsDto} from "./dto/update-post-params.dto";
 import {AuthGuard} from "../../auth/auth.guard";
-import {Public} from "../../auth/decorators/public.decorator";
 import {Roles} from "../../auth/decorators/roles.decorator";
 import { Role } from '../../auth/role.enum';
 import {HelpersService} from "../../helpers/helpers.service";
