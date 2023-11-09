@@ -148,7 +148,7 @@ export class UsersService {
 
     async getUserRoleData(authtoken: string): Promise<any> {
         const user: any = await this.helperService.decodeJWTToken(authtoken);
-        return await Role.findAll({
+        const roles = await Role.findAll({
             include: [
               {
                 model: User,
@@ -161,5 +161,6 @@ export class UsersService {
             where: {},
             attributes: ['role']
           });
+          return roles.map(roleObject => roleObject.role);
     }
 }
