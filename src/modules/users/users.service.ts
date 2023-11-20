@@ -135,7 +135,6 @@ export class UsersService {
     async login(email: string, password: string, existingUser: User) {
         try {
             const token = this.generateToken(existingUser);
-            //const userRoles = await this.userRoleService.getUserRoles(existingUser.id);
             const userRoles = await this.getUserRoles(existingUser.role_id);
             const roleToken = this.generateRoleToken(existingUser, userRoles);
             const response = {
@@ -150,7 +149,7 @@ export class UsersService {
             };
             return response;
         } catch (error) {
-            this.logger.error("Error occured :login in user service: " + error);
+            this.logger.error("Error occurred :login in user service: " + error);
             throw error;
         }
     }
@@ -175,8 +174,6 @@ export class UsersService {
      */
     async getUserRoleData(authtoken: string): Promise<any> {
         const user: any = await this.helperService.decodeJWTToken(authtoken);
-        console.log('getUserRoleData');
-        console.log(user)
         const roles = await Role.findAll({
             include: [
               {

@@ -26,8 +26,5 @@ export const loginUserMockResponse={
 export const getPostsMockRequestParams = {"roleId":1};
 
 export const getUserRoleDataSuccessResponse=[
-  {
-      "id": 3,
-      "role": "User"
-  }
+    "Manager"
 ]

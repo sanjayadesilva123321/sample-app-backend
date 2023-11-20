@@ -16,3 +16,5 @@ export const createUserMockBDResponse =  {
   // updatedAt: 2023-11-12T15:13:22.198Z,
   // createdAt: 2023-11-12T15:13:22.198Z
 }}
+
+export const getUserRoleResponse =['Manager']

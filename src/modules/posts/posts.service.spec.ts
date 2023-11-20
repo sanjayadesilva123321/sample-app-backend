@@ -2,12 +2,12 @@ import {Logger} from "@nestjs/common";
 import {Test, TestingModule} from "@nestjs/testing";
 import {ConfigService} from "@nestjs/config";
 import {PostsService} from "./posts.service";
-import {Post} from "../../models/post";
 import {PostDal} from "./posts.dal";
+import {PostProvider} from "./posts.provider";
+import {Post} from "../../models/post";
 import {
     getPostsDataDBResponse,
 } from "../../../test/references/services/post";
-import {PostProvider} from "./posts.provider";
 
 beforeEach(() => {
     jest.resetModules();
@@ -48,13 +48,17 @@ describe("PostsService", () => {
     });
 
     describe("removePosts", () => {
-        // it("should delete post", async () => {
-        //     Post.findOne = jest.fn().mockReturnValueOnce(getPostFindOneResponse);
-        //     //Post.destroy = jest.fn().mockReturnValueOnce(1);
+        it("should delete post", async () => {
+            Post.findOne = jest.fn().mockImplementation(() => ({dataValues: {id: 2,
+                    title: 'updated title3',
+                    content: 'test post content',
+                    created_by: 10006,
+                    updated_by: null}}));
+            Post.destroy = jest.fn().mockImplementation(() => true);
 
-        //     const result = await postservice.removePost(1002);
-        //     expect(result).toEqual(1);
-        // });
+            const result = await postservice.removePost(1002);
+            expect(result).toEqual(undefined);
+        });
 
         it("should show error when post does not exists", async () => {
             Post.findOne = jest.fn().mockReturnValueOnce(null);
@@ -71,13 +75,18 @@ describe("PostsService", () => {
 
     describe("update post by postId", () => {
         const postId = 1;
-        // it("should return updated post", async () => {
-        //     Post.findOne = jest.fn().mockReturnValueOnce(getPostFindOneResponse);
-        //     Post.update = jest.fn().mockReturnValueOnce(getUpdatePostDataDBResponse);
+        it("should return updated post", async () => {
 
-        //     const result = await postservice.updatePost(3, 'aaaa', 'bbbb');
-        //     expect(result).toEqual(getPostsDataDBResponse);
-        // });
+            Post.findOne = jest.fn().mockImplementation(() => ({dataValues: {id: 2,
+                    title: 'updated title3',
+                    content: 'test post content',
+                    created_by: 10006,
+                    updated_by: null}}));
+            Post.update = jest.fn().mockImplementation(() => [1, [{}]]);
+
+            const result = await postservice.updatePost(3, 'aaaa', 'bbbb');
+            expect(result).toEqual({});
+        });
 
         it("Exception throw", async () => {
             Post.update = jest.fn().mockImplementation(() => {
