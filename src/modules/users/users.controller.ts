@@ -1,13 +1,11 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Logger} from "@nestjs/common";
-import {ApiResponse, ApiTags} from "@nestjs/swagger";
+import {Controller, Get, Post, Body, Req, Res, Logger} from "@nestjs/common";
+import {ApiBearerAuth, ApiHeader, ApiResponse, ApiTags} from "@nestjs/swagger";
 import {Request, Response} from "express";
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import {UsersService} from "./users.service";
-import {UserRoleService} from "../user-role/user-role.service";
 import {MainService} from "../../utils/main/main.service";
 import {CreateUserDto} from "./dto/create-user.dto";
-import {UpdateUserDto} from "./dto/update-user.dto";
 import {UserLoginDto} from "./dto/user-login.dto";
 import {Public} from "../../auth/decorators/public.decorator";
 
@@ -16,32 +14,16 @@ import {Public} from "../../auth/decorators/public.decorator";
 export class UsersController {
     constructor(
         private readonly usersService: UsersService,
-        private readonly userRoleService: UserRoleService,
         private mainsService: MainService,
         private readonly logger: Logger
     ) {}
 
-    @Get()
-    findAll() {
-        return this.usersService.findAll();
-    }
-
-    // @Get("/:id")
-    // findOne(@Param("id") id: string) {
-    //     console.log('dddd')
-    //     return this.usersService.findOne(+id);
-    // }
-
-    @Patch(":id")
-    update(@Param("id") id: string, @Body() updateUserDto: UpdateUserDto) {
-        return this.usersService.update(+id, updateUserDto);
-    }
-
-    @Delete(":id")
-    remove(@Param("id") id: string) {
-        return this.usersService.remove(+id);
-    }
-
+    /**
+     * user signup
+     * @param request
+     * @param requestBody
+     * @param response
+     */
     @Public()
     @Post("signup")
     @ApiResponse({status: ResponseCode.CREATED, description: ResponseMessages.CREATED})
@@ -49,7 +31,7 @@ export class UsersController {
     @ApiResponse({status: ResponseCode.DUPLICATE_USER, description: ResponseMessages.USER_ALREADY_EXISTS})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     @Post("signup")
-    async signUp(@Req() request: Request, @Body() requestBody: CreateUserDto, @Res() response: Response) {
+    async signUp(@Req() request: Request, @Body() requestBody: CreateUserDto, @Res() response: Response): Promise<object> {
         try {
             const {email, password} = requestBody;
             const existingUser = await this.usersService.getUserDetailsByEmail(email);
@@ -60,7 +42,7 @@ export class UsersController {
                     ResponseMessages.USER_ALREADY_EXISTS,
                     null,
                     false,
-                    ResponseCode.UNPROCESSABLE_CONTENT,
+                    ResponseCode.DUPLICATE_USER,
                     ResponseCode.DUPLICATE_USER
                 );
             }
@@ -86,6 +68,12 @@ export class UsersController {
         }
     }
 
+    /**
+     * user login
+     * @param req
+     * @param requestBody
+     * @param response
+     */
     @Public()
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.SUCCESS})
     @ApiResponse({status: 400, description: "Bad Request"})
@@ -96,7 +84,6 @@ export class UsersController {
         try {
             const {email, password} = requestBody;
             const existingUser = await this.usersService.getUserDetailsByEmail(email);
-
             if (!existingUser) {
                 return this.mainsService.sendResponse(
                     response,
@@ -141,7 +128,18 @@ export class UsersController {
         }
     }
 
-    @Public()
+    /**
+     * get user role data from authorization token
+     * @param request
+     * @param response
+     */
+    //@Public()
+    @ApiBearerAuth()
+    @ApiHeader({
+        name: "authorization",
+        description: "authorization Token",
+        required: true
+    })
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.SUCCESS})
     @ApiResponse({status: 400, description: "Bad Request"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})

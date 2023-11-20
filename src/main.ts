@@ -15,15 +15,30 @@ async function bootstrap() {
         exposedHeaders: "*",
     });
 
+    /*
+    swagger
+    */
     const config = new DocumentBuilder()
         .setTitle("Your API")
         .setDescription("API description")
         .setVersion("1.0")
+        .addBearerAuth(
+            {
+                description: "Access Token",
+                name: "Authorization",
+                bearerFormat: "Bearer",
+                scheme: "Bearer",
+                type: "http",
+                in: "Header",
+            },
+            "access-token"
+        )
         .addTag("API")
         .build();
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("api/swagger", app, document);
+    //role-token required in swagger
 
     await app.listen(3000);
     console.log("Sample app started at port : " + configService.get("PORT"));

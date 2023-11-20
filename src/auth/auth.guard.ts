@@ -7,12 +7,21 @@ import {IS_PUBLIC_KEY} from "./decorators/public.decorator";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+    /**
+     * @param jwtService
+     * @param configService
+     * @param reflector
+     */
     constructor(
         private jwtService: JwtService,
         private readonly configService: ConfigService,
         private reflector: Reflector
     ) {}
 
+    /**
+     * check the access of the routes
+     * @param context
+     */
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
@@ -37,7 +46,12 @@ export class AuthGuard implements CanActivate {
         return true;
     }
 
-    private extractTokenFromHeader(request: Request): string | undefined {
+    /**
+     * extract auth token from the header
+     * @param request
+     * @private
+     */
+    private extractTokenFromHeader(request: Request): string{
         const [type, token] = request.headers.authorization?.split(" ") ?? [];
         return type === "Bearer" ? token : undefined;
     }

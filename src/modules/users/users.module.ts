@@ -1,15 +1,15 @@
 import {Module, Logger} from "@nestjs/common";
 import {UsersService} from "./users.service";
-import {UserRoleService} from "../user-role/user-role.service";
-import {MainService} from "../../utils/main/main.service";
-import {UsersController} from "./users.controller";
 import {UserProvider} from "./users.provider";
+import {UsersController} from "./users.controller";
 import {UserDal} from "./users.dal";
-import {UserRoleDal} from "../user-role/user-role.dal";
+import {MainService} from "../../utils/main/main.service";
 import {HelpersService} from "../../helpers/helpers.service";
+// import model like UserRoleService
+
 @Module({
     controllers: [UsersController],
-    providers: [...UserProvider, UsersService, UserDal, UserRoleService, UserRoleDal, MainService, Logger,HelpersService],
+    providers: [...UserProvider, UsersService, UserDal, MainService, Logger,HelpersService],
     exports: [UsersService],
 })
 export class UsersModule {}

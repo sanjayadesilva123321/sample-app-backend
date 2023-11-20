@@ -9,10 +9,15 @@ import {ResponseCode} from "../configs/response.codes";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private reflector: Reflector,
+    /**
+     *
+     * @param reflector
+     * @param helperService
+     * @param mainService
+     */
+    constructor(private reflector: Reflector,
     @Inject(HelpersService) private helperService: HelpersService,
     @Inject(MainService) private mainService: MainService) {}
-
   async canActivate(context: ExecutionContext): Promise<any> {
     const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
       context.getHandler(),

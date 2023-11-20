@@ -3,17 +3,14 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import {ConfigService} from "@nestjs/config";
 import {USER_REPOSITORY} from "../../constant/index";
-import {UpdateUserDto} from "./dto/update-user.dto";
 import {User} from "../../models/user";
 import {UserDal} from "./users.dal";
-import {UserRoleService} from "../user-role/user-role.service";
 import {HelpersService} from "../../helpers/helpers.service";
 import {Role} from "../../models/role";
 
 @Injectable()
 export class UsersService {
     constructor(
-        private readonly userRoleService: UserRoleService,
         @Inject(USER_REPOSITORY) private userRepository: typeof User,
         private userDal: UserDal,
         private readonly configService: ConfigService,
@@ -28,7 +25,7 @@ export class UsersService {
                 password: password,
             });
         } catch (error) {
-            this.logger.error("Error occured :create user in user service: " + error);
+            this.logger.error("Error occurred :create user in user service: " + error);
             throw error;
         }
     }
@@ -41,36 +38,37 @@ export class UsersService {
         return `This action returns a #${id} user`;
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
-        return `This action updates a #${id} user`;
-    }
-
     remove(id: number) {
         return `This action removes a #${id} user`;
     }
 
+    /**
+     * hash password & create user with the given email & password
+     * @param email
+     * @param password
+     */
     async userSignup(email: string, password: string) {
         try {
-            const hashedPassword = await this.hashPassword(password);
-            const user = await this.create(email, hashedPassword);
-            //const userRole = await this.userRoleService.create(user.id, ROLES.USER);
+            const hashedPassword : string = await this.hashPassword(password);
+            const user : User = await this.create(email, hashedPassword);
             const response = {
                 user: {
                     id: user.id,
                     email: user.email,
                 }
-                // ,
-                // ...{
-                //     role: userRole,
-                // },
             };
             return response;
         } catch (error) {
-            this.logger.error("Error occured :usersignup in user service: " + error);
+            this.logger.error("Error occurred :usersignup in user service: " + error);
             throw error;
         }
     }
 
+    /**
+     * Generate token for the user
+     * @param user
+     * @private
+     */
     private generateToken(user: User): string {
         try {
             const token = jwt.sign(
@@ -80,11 +78,17 @@ export class UsersService {
             );
             return token;
         } catch (error) {
-            this.logger.error("Error occured :generateToken in user service: " + error);
+            this.logger.error("Error occurred :generateToken in user service: " + error);
             throw error;
         }
     }
 
+    /**
+     * generate user role token
+     * @param user
+     * @param userRoles
+     * @private
+     */
     private generateRoleToken(user: User, userRoles: string[]): string {
         try {
             const token = jwt.sign(
@@ -99,6 +103,10 @@ export class UsersService {
         }
     }
 
+    /**
+     * Get detail of user by email
+     * @param email
+     */
     async getUserDetailsByEmail(email: string): Promise<User> {
         return await this.userDal.findOne({
             where: {
@@ -108,17 +116,27 @@ export class UsersService {
         });
     }
 
+    /**
+     * hash user password
+     * @param password
+     */
     async hashPassword(password: string): Promise<string> {
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         return hashedPassword;
     }
 
+    /**
+     * user login function
+     * @param email
+     * @param password
+     * @param existingUser
+     */
     async login(email: string, password: string, existingUser: User) {
         try {
             const token = this.generateToken(existingUser);
             //const userRoles = await this.userRoleService.getUserRoles(existingUser.id);
-            const userRoles = await this.userRoleService.getUserRoles(existingUser.role_id);
+            const userRoles = await this.getUserRoles(existingUser.role_id);
             const roleToken = this.generateRoleToken(existingUser, userRoles);
             const response = {
                 user: {
@@ -137,17 +155,28 @@ export class UsersService {
         }
     }
 
-    async validateUserPassword(plainPasswordText, hashedPassword) {
+    /**
+     * validate given password of the user
+     * @param plainPasswordText
+     * @param hashedPassword
+     */
+    async validateUserPassword(plainPasswordText:string, hashedPassword:string):Promise<boolean> {
         try {
             return await bcrypt.compare(plainPasswordText, hashedPassword);
         } catch (error) {
-            this.logger.error("Error occured :validateUserPassword in user service: " + error);
+            this.logger.error("Error occurred :validateUserPassword in user service: " + error);
             throw error;
         }
     }
 
+    /**
+     * get user role data from auth token
+     * @param authtoken
+     */
     async getUserRoleData(authtoken: string): Promise<any> {
         const user: any = await this.helperService.decodeJWTToken(authtoken);
+        console.log('getUserRoleData');
+        console.log(user)
         const roles = await Role.findAll({
             include: [
               {
@@ -162,5 +191,17 @@ export class UsersService {
             attributes: ['role']
           });
           return roles.map(roleObject => roleObject.role);
+    }
+
+    /**
+     * get user role name from user role id
+     * @param role_id
+     */
+    async getUserRoles(role_id: number): Promise<string[]> {
+        const role = await Role.findOne({
+            where: {id:role_id},
+        });
+        const userRoles =[role.role];
+        return userRoles;
     }
 }

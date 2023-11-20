@@ -1,13 +1,13 @@
-import {SEQUELIZE} from "../constant/index";
 import {Sequelize} from "sequelize-typescript";
 import {ConfigService} from "@nestjs/config";
+import {SEQUELIZE} from "../constant/index";
 import {User} from "../models/user";
 import {UserRole} from "../models/user-role";
 import {Role} from "../models/role";
 import {Post} from "../models/post";
 
 /**
- * OLTP db configuration
+ * db configuration
  */
 export const DatabaseProvider = [
     {

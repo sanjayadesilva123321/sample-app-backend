@@ -7,7 +7,7 @@ import {
 import {ApiProperty} from "@nestjs/swagger";
 
 /**
- * Define userlogin request body
+ * Define user login request body
  * @param  email
  * @param  password
  * @returns object

@@ -27,7 +27,6 @@ export class Role extends Model<Role> {
     })
     public status: number;
 
-    // Define the association
     @HasMany(() => User)
     users: User[];
 }

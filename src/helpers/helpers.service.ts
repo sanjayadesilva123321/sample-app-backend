@@ -1,11 +1,14 @@
 import {Injectable, Logger} from "@nestjs/common";
-//import jwt_decode from "jwt-decode";
 import { jwtDecode } from "jwt-decode";
-import jwt = require("jsonwebtoken");
 import {ConfigService} from "@nestjs/config";
+import jwt = require("jsonwebtoken");
 
 @Injectable()
 export class HelpersService {
+    /**
+     * @param configService
+     * @param logger
+     */
     constructor(private readonly configService: ConfigService, private readonly logger: Logger) {}
 
     /**
@@ -35,7 +38,7 @@ export class HelpersService {
     public async verifyJWTWebToken(token: any) {
         try {
             const refactoredToken = token ? token.replace("Bearer ", "") : "";
-            const response = await jwt.verify(refactoredToken, this.configService.get<string>("ROLE_TOKEN_SECRET"));
+            const response = jwt.verify(refactoredToken, this.configService.get<string>("ROLE_TOKEN_SECRET"));
             return [null, response];
         } catch (error: any) {
             this.logger.error("Error in helper service2 : " + error);

@@ -1,23 +1,24 @@
-import {UseGuards, Controller, Get, Post, Body, Patch, Param, Delete, Req, Res, Logger} from "@nestjs/common";
+import {UseGuards, Controller, Get, Body, Patch, Param, Delete, Req, Res, Logger} from "@nestjs/common";
 import {ApiResponse, ApiTags, ApiBearerAuth, ApiHeader} from "@nestjs/swagger";
 import {Request, Response} from "express";
 import {PostsService} from "./posts.service";
-import {CreatePostDto} from "./dto/create-post.dto";
 import {UpdatePostDto} from "./dto/update-post.dto";
+import {UpdatePostParamsDto} from "./dto/update-post-params.dto";
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import {MainService} from "../../utils/main/main.service";
-import {UpdatePostParamsDto} from "./dto/update-post-params.dto";
 import {AuthGuard} from "../../auth/auth.guard";
 import {Roles} from "../../auth/decorators/roles.decorator";
 import { Role } from '../../auth/role.enum';
 import {HelpersService} from "../../helpers/helpers.service";
+import { Post } from "src/models/post";
 
 @ApiTags("Posts")
 @ApiBearerAuth()
 @ApiHeader({
     name: "role-token",
     description: "Role Token",
+    required: true
 })
 @Controller("Posts")
 export class PostsController {
@@ -28,11 +29,11 @@ export class PostsController {
         private helperService : HelpersService
     ) {}
 
-    @Post()
-    create(@Body() createPostDto: CreatePostDto) {
-        return this.postsService.create(createPostDto);
-    }
-
+    /**
+     * Get posts list available for the logged-in user
+     * @param request
+     * @param response
+     */
     @UseGuards(AuthGuard)
     @Roles(Role.Admin, Role.Manager) 
     @Get("")
@@ -41,15 +42,15 @@ export class PostsController {
     @ApiResponse({status: 401, description: "Unauthorized"})
     @ApiResponse({status: 403, description: "Forbidden"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
-    public async getPosts(@Req() request: Request, @Res() response: Response) {
+    public async getPosts(@Req() request: Request, @Res() response: Response):Promise<object> {
         try {
             const roleToken: any = request.headers['role-token'];
             const user: any = await this.helperService.decodeJWTToken(roleToken);
-            const syncStatus = await this.postsService.getPosts(user.roles[0]);
+            const posts :Post[] = await this.postsService.getPosts(user.roles[0]);
             return this.mainsService.sendResponse(
                 response,
                 ResponseMessages.SUCCESS,
-                syncStatus,
+                posts,
                 true,
                 ResponseCode.SUCCESS
             );
@@ -66,11 +67,12 @@ export class PostsController {
         }
     }
 
-    @Get(":id")
-    findOne(@Param("id") id: string) {
-        return this.postsService.findOne(+id);
-    }
-
+    /**
+     * Update Post by given post ID
+     * @param params
+     * @param requestBody
+     * @param response
+     */
     //@UseGuards(AuthGuard)
     @Roles(Role.Admin, Role.Manager)
     @Patch(":id")
@@ -80,11 +82,10 @@ export class PostsController {
     @ApiResponse({status: 403, description: "Forbidden"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     public async update(
-        @Req() request: Request,
         @Param() params: UpdatePostParamsDto,
         @Body() requestBody: UpdatePostDto,
         @Res() response: Response
-    ) {
+    ):Promise<object> {
         try {
             const {title, content} = requestBody;
             const updateStatus = await this.postsService.updatePost(params.id, title, content);
@@ -113,7 +114,7 @@ export class PostsController {
     @ApiResponse({status: 200, description: "Delete successfully"})
     @ApiResponse({status: 401, description: "Unauthorized"})
     @ApiResponse({status: 500, description: "Internal server error"})
-    public async deletePost(@Req() request: Request, @Param() params: UpdatePostParamsDto, @Res() response: Response) {
+    public async deletePost(@Req() request: Request, @Param() params: UpdatePostParamsDto, @Res() response: Response):Promise<object> {
         try {
             await this.postsService.removePost(params.id);
 

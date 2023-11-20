@@ -1,35 +1,24 @@
-import {Inject, Injectable, Logger} from "@nestjs/common";
-import {CreatePostDto} from "./dto/create-post.dto";
+import {Injectable, Logger} from "@nestjs/common";
 import {PostDal} from "./posts.dal";
-import {POST_REPOSITORY} from "../../constant/index";
 import {Post} from "../../models/post";
-import {User} from "../../models/user";
 import { Role } from '../../auth/role.enum'
 
 @Injectable()
 export class PostsService {
     constructor(
         private postDal: PostDal,
-        private readonly logger: Logger,
-        @Inject(POST_REPOSITORY) private postRepository: typeof Post
+        private readonly logger: Logger
     ) {}
 
-    create(createPostDto: CreatePostDto) {
-        return "This action adds a new post";
-    }
-
-    findAll() {
-        return `This action returns all posts`;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${id} post`;
-    }
-
-    async updatePost(id: number, title, content) {
+    /**
+     * Update post by post ID
+     * @param id
+     * @param title
+     * @param content
+     */
+    async updatePost(id: number, title: string, content: string):Promise<Post> {
         try {
             const post = await this.postDal.findOne(id);
-
             if (!post) {
                 throw new Error("Post not found");
             }
@@ -46,11 +35,15 @@ export class PostsService {
             }
             return updatedPost;
         } catch (error) {
-            this.logger.error("Error occured :updatePosts in post service: " + error);
+            this.logger.error("Error occurred :updatePosts in post service: " + error);
             throw error;
         }
     }
 
+    /**
+     * Remove post by Post Id
+     * @param id
+     */
     async removePost(id: number) {
         try {
             const postData: any = await this.postDal.findOne({
@@ -62,37 +55,23 @@ export class PostsService {
                 this.logger.error("Error in post service : post not found");
                 throw Error("Cannot find the post");
             }
-
-            await this.postDal.delete({id: id});
         } catch (error: any) {
             this.logger.error("Error in post service : " + error);
             throw Error(error);
         }
     }
 
-    async getPosts(role : string) {
+    async getPosts(role : string): Promise<Post[]> {
         try {
             if(role === Role.Admin){
                 return await this.postDal.findAllByPayload({});
             }if(role=== Role.Manager){
-            return await this.postDal.findAllByPayload({
-                include: [
-                  {
-                    model: User,
-                    where: {
-                      role_id: 2
-                    },
-                    attributes: []
-                  }
-                ],
-                where: {},
-                attributes: ['id', 'title', 'content']
-              })
+                return await this.postDal.findAllByPayloadForNonAdminUsers(null, 2 )
             }else{
                 return null
             }
         } catch (error) {
-            this.logger.error("Error occured :getPosts in post service: " + error);
+            this.logger.error("Error occurred :getPosts in post service: " + error);
             throw error;
         }
     }

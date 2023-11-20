@@ -10,13 +10,8 @@ export class UserDal {
      * Find all user details by payload
      * @param payload
      */
-    async findAllByPayload(payload: any) {
-        try {
-            return await this.userRepository.findAll(payload);
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+    async findAllByPayload(payload: any) :Promise<User[]> {
+        return await this.userRepository.findAll(payload);
     }
 
     /**
