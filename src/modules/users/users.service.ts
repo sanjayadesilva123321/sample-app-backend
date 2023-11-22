@@ -7,6 +7,7 @@ import {USER_REPOSITORY} from "../../constant";
 import {User} from "../../models/user";
 import {HelpersService} from "../../helpers/helpers.service";
 import {Role} from "../../models/role";
+import {UserLoginResponse, UserSignupResponse} from "../../types/services/post";
 
 @Injectable()
 export class UsersService {
@@ -42,7 +43,7 @@ export class UsersService {
      * @param password
      * @return object with created user id and email
      */
-    async userSignup(email: string, password: string) {
+    async userSignup(email: string, password: string):Promise<UserSignupResponse> {
         try {
             const hashedPassword : string = await this.hashPassword(password);
             const user : User = await this.create(email, hashedPassword);
@@ -127,7 +128,7 @@ export class UsersService {
      * @param password
      * @param existingUser
      */
-    async login(email: string, password: string, existingUser: User) {
+    async login(email: string, password: string, existingUser: User):Promise<UserLoginResponse> {
         try {
             const token = this.generateToken(existingUser);
             const userRoles = await this.getUserRoles(existingUser.role_id);
