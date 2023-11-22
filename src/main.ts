@@ -38,7 +38,6 @@ async function bootstrap() {
 
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup("api/swagger", app, document);
-    //role-token required in swagger
 
     await app.listen(3000);
     console.log("Sample app started at port : " + configService.get("PORT"));

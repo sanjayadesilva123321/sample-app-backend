@@ -1,5 +1,4 @@
-import {USER_REPOSITORY} from "../../constant/index";
-import {USER_ROLE_REPOSITORY} from "../../constant/index";
+import {USER_REPOSITORY, USER_ROLE_REPOSITORY} from "../../constant";
 import {User} from "../../models/user";
 import {UserRole} from "../../models/user-role";
 

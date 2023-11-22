@@ -1,6 +1,6 @@
 import {Table, Column, Model, DataType, ForeignKey, HasMany, BelongsTo} from "sequelize-typescript";
-import {Role} from "../models/role";
-import {Post} from "../models/post";
+import {Role} from "./role";
+import {Post} from "./post";
 @Table({
     tableName: "user",
     timestamps: true,

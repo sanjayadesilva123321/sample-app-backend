@@ -1,5 +1,5 @@
 import {Inject, Injectable} from "@nestjs/common";
-import {USER_REPOSITORY} from "../../constant/index";
+import {USER_REPOSITORY} from "../../constant";
 import {User} from "../../models/user";
 
 @Injectable()
@@ -9,6 +9,7 @@ export class UserDal {
     /**
      * Find all user details by payload
      * @param payload
+     * @return user list
      */
     async findAllByPayload(payload: any) :Promise<User[]> {
         return await this.userRepository.findAll(payload);
@@ -28,6 +29,11 @@ export class UserDal {
         }
     }
 
+    /**
+     * create user
+     * @param payload
+     * @return created user
+     */
     async createUser(payload: any) {
         return this.userRepository.create(payload);
     }

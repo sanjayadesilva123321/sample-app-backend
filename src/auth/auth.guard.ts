@@ -20,7 +20,9 @@ export class AuthGuard implements CanActivate {
 
     /**
      * check the access of the routes
+     * if route is public return true
      * @param context
+     * @return boolean
      */
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -50,6 +52,7 @@ export class AuthGuard implements CanActivate {
      * extract auth token from the header
      * @param request
      * @private
+     * @return auth token
      */
     private extractTokenFromHeader(request: Request): string{
         const [type, token] = request.headers.authorization?.split(" ") ?? [];

@@ -25,3 +25,23 @@ export class CreateUserDto {
     @ApiProperty()
     password: string;
 }
+
+/**
+ * Define user login request body
+ * @param  email
+ * @param  password
+ * @returns object
+ */
+export class UserLoginDto {
+    @IsDefined()
+    @IsNotEmpty()
+    @IsEmail()
+    @ApiProperty()
+    email: string;
+
+    @IsDefined()
+    @IsNotEmpty()
+    @IsAlphanumeric()
+    @ApiProperty()
+    password: string;
+}

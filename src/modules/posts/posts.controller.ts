@@ -2,8 +2,7 @@ import {UseGuards, Controller, Get, Body, Patch, Param, Delete, Req, Res, Logger
 import {ApiResponse, ApiTags, ApiBearerAuth, ApiHeader} from "@nestjs/swagger";
 import {Request, Response} from "express";
 import {PostsService} from "./posts.service";
-import {UpdatePostDto} from "./dto/update-post.dto";
-import {UpdatePostParamsDto} from "./dto/update-post-params.dto";
+import {UpdatePostDto, UpdatePostParamsDto} from "./dto/post.dto";
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import {MainService} from "../../utils/main/main.service";
@@ -11,7 +10,7 @@ import {AuthGuard} from "../../auth/auth.guard";
 import {Roles} from "../../auth/decorators/roles.decorator";
 import { Role } from '../../auth/role.enum';
 import {HelpersService} from "../../helpers/helpers.service";
-import { Post } from "src/models/post";
+import { Post } from "../../models/post";
 
 @ApiTags("Posts")
 @ApiBearerAuth()
@@ -33,6 +32,7 @@ export class PostsController {
      * Get posts list available for the logged-in user
      * @param request
      * @param response
+     * @return array of posts
      */
     @UseGuards(AuthGuard)
     @Roles(Role.Admin, Role.Manager) 
@@ -72,6 +72,7 @@ export class PostsController {
      * @param params
      * @param requestBody
      * @param response
+     * @return updated Post
      */
     //@UseGuards(AuthGuard)
     @Roles(Role.Admin, Role.Manager)
@@ -109,6 +110,13 @@ export class PostsController {
         }
     }
 
+    /**
+     * Delete post by given post id
+     * @param request
+     * @param params
+     * @param response
+     * @return {} when post deleted successfully
+     */
     @Roles(Role.Admin)
     @Delete(":id")
     @ApiResponse({status: 200, description: "Delete successfully"})
@@ -117,7 +125,6 @@ export class PostsController {
     public async deletePost(@Req() request: Request, @Param() params: UpdatePostParamsDto, @Res() response: Response):Promise<object> {
         try {
             await this.postsService.removePost(params.id);
-
             return this.mainsService.sendResponse(
                 response,
                 ResponseMessages.DELETE_SUCCESS,

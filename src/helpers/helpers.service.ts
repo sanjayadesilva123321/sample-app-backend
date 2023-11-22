@@ -15,7 +15,7 @@ export class HelpersService {
      * Decode JWT Code and get Values
      * @param token
      */
-    public async decodeJWTToken(token: string | undefined) {
+    public async decodeJWTToken(token: string | undefined) :Promise<string> {
         try {
             const refactoredToken = token ? token.replace("Bearer ", "") : "";
             if (refactoredToken === "") {
@@ -25,7 +25,7 @@ export class HelpersService {
             }
         } catch (error: any) {
             if (error instanceof Error) {
-                this.logger.error( "Error in helper service1 : " + error);
+                this.logger.error( "Error in helper service -decodeJWTToken: " + error);
                 throw new Error(error.message);
             }
         }
@@ -41,7 +41,7 @@ export class HelpersService {
             const response = jwt.verify(refactoredToken, this.configService.get<string>("ROLE_TOKEN_SECRET"));
             return [null, response];
         } catch (error: any) {
-            this.logger.error("Error in helper service2 : " + error);
+            this.logger.error("Error in helper service -verifyJWTWebToken: " + error);
             return [error, null];
         }
     }

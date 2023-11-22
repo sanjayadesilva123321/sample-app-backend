@@ -1,10 +1,10 @@
-import {Inject, Injectable, Logger} from "@nestjs/common";
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import {Inject, Injectable, Logger} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
-import {USER_REPOSITORY} from "../../constant/index";
-import {User} from "../../models/user";
 import {UserDal} from "./users.dal";
+import {USER_REPOSITORY} from "../../constant";
+import {User} from "../../models/user";
 import {HelpersService} from "../../helpers/helpers.service";
 import {Role} from "../../models/role";
 
@@ -18,6 +18,12 @@ export class UsersService {
         private helperService : HelpersService,
     ) {}
 
+    /**
+     * create user
+     * @param email
+     * @param password
+     * @return created user
+     */
     async create(email: string, password: string): Promise<User> {
         try {
             return await this.userDal.createUser({
@@ -30,34 +36,22 @@ export class UsersService {
         }
     }
 
-    findAll() {
-        return `This action returns all users`;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${id} user`;
-    }
-
-    remove(id: number) {
-        return `This action removes a #${id} user`;
-    }
-
     /**
      * hash password & create user with the given email & password
      * @param email
      * @param password
+     * @return object with created user id and email
      */
     async userSignup(email: string, password: string) {
         try {
             const hashedPassword : string = await this.hashPassword(password);
             const user : User = await this.create(email, hashedPassword);
-            const response = {
+            return {
                 user: {
                     id: user.id,
                     email: user.email,
                 }
             };
-            return response;
         } catch (error) {
             this.logger.error("Error occurred :usersignup in user service: " + error);
             throw error;
@@ -68,15 +62,15 @@ export class UsersService {
      * Generate token for the user
      * @param user
      * @private
+     * @return generated token
      */
     private generateToken(user: User): string {
         try {
-            const token = jwt.sign(
+            return jwt.sign(
                 {id: user.id, username: user.email},
                 this.configService.get<string>("JWT_SECRET_KEY"),
                 {expiresIn: "1h"}
             );
-            return token;
         } catch (error) {
             this.logger.error("Error occurred :generateToken in user service: " + error);
             throw error;
@@ -88,15 +82,15 @@ export class UsersService {
      * @param user
      * @param userRoles
      * @private
+     * @return generated role token
      */
     private generateRoleToken(user: User, userRoles: string[]): string {
         try {
-            const token = jwt.sign(
+            return jwt.sign(
                 {id: user.id, username: user.email, roles: userRoles},
                 this.configService.get<string>("ROLE_TOKEN_SECRET"),
                 {expiresIn: "1h"}
             );
-            return token;
         } catch (error) {
             this.logger.error("Error occured :generateRoleToken in user service: " + error);
             throw error;
@@ -106,6 +100,7 @@ export class UsersService {
     /**
      * Get detail of user by email
      * @param email
+     * @return User
      */
     async getUserDetailsByEmail(email: string): Promise<User> {
         return await this.userDal.findOne({
@@ -119,11 +114,11 @@ export class UsersService {
     /**
      * hash user password
      * @param password
+     * @return hashedPassword
      */
     async hashPassword(password: string): Promise<string> {
         const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
-        return hashedPassword;
+        return await bcrypt.hash(password, saltRounds);
     }
 
     /**
@@ -137,7 +132,7 @@ export class UsersService {
             const token = this.generateToken(existingUser);
             const userRoles = await this.getUserRoles(existingUser.role_id);
             const roleToken = this.generateRoleToken(existingUser, userRoles);
-            const response = {
+            return {
                 user: {
                     id: existingUser.id,
                     email: existingUser.email,
@@ -147,7 +142,6 @@ export class UsersService {
                     roleToken,
                 },
             };
-            return response;
         } catch (error) {
             this.logger.error("Error occurred :login in user service: " + error);
             throw error;
@@ -158,6 +152,7 @@ export class UsersService {
      * validate given password of the user
      * @param plainPasswordText
      * @param hashedPassword
+     * @return boolean
      */
     async validateUserPassword(plainPasswordText:string, hashedPassword:string):Promise<boolean> {
         try {
@@ -171,8 +166,9 @@ export class UsersService {
     /**
      * get user role data from auth token
      * @param authtoken
+     * @return array of user roles
      */
-    async getUserRoleData(authtoken: string): Promise<any> {
+    async getUserRoleData(authtoken: string): Promise<string[]> {
         const user: any = await this.helperService.decodeJWTToken(authtoken);
         const roles = await Role.findAll({
             include: [
@@ -193,12 +189,12 @@ export class UsersService {
     /**
      * get user role name from user role id
      * @param role_id
+     * @return userRole array
      */
     async getUserRoles(role_id: number): Promise<string[]> {
         const role = await Role.findOne({
             where: {id:role_id},
         });
-        const userRoles =[role.role];
-        return userRoles;
+        return [role.role];
     }
 }

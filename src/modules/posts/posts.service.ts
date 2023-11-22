@@ -1,7 +1,7 @@
 import {Injectable, Logger} from "@nestjs/common";
 import {PostDal} from "./posts.dal";
 import {Post} from "../../models/post";
-import { Role } from '../../auth/role.enum'
+import {Role} from '../../auth/role.enum'
 
 @Injectable()
 export class PostsService {
@@ -15,6 +15,7 @@ export class PostsService {
      * @param id
      * @param title
      * @param content
+     * @return updated Post object
      */
     async updatePost(id: number, title: string, content: string):Promise<Post> {
         try {
@@ -54,6 +55,8 @@ export class PostsService {
             if (!postData) {
                 this.logger.error("Error in post service : post not found");
                 throw Error("Cannot find the post");
+            }else{
+                await this.postDal.delete({'id':id})
             }
         } catch (error: any) {
             this.logger.error("Error in post service : " + error);
@@ -61,6 +64,11 @@ export class PostsService {
         }
     }
 
+    /**
+     * get posts
+     * @param role
+     * return Post[]
+     */
     async getPosts(role : string): Promise<Post[]> {
         try {
             if(role === Role.Admin){
@@ -68,7 +76,7 @@ export class PostsService {
             }if(role=== Role.Manager){
                 return await this.postDal.findAllByPayloadForNonAdminUsers(null, 2 )
             }else{
-                return null
+                return [];
             }
         } catch (error) {
             this.logger.error("Error occurred :getPosts in post service: " + error);

@@ -1,5 +1,5 @@
 import {Inject, Injectable} from "@nestjs/common";
-import {POST_REPOSITORY} from "../../constant/index";
+import {POST_REPOSITORY} from "../../constant";
 import {Post} from "../../models/post";
 import {User} from "../../models/user";
 
@@ -8,16 +8,22 @@ export class PostDal {
     constructor(@Inject(POST_REPOSITORY) private readonly postRepository: typeof Post) {}
 
     /**
-     * Find all user details by payload
-     * @param payload
+     * Find all posts by payload
+     * @param conditions
+     * @return posts object array
      */
-
       async findAllByPayload(conditions: any = null):Promise<Post[]> {
         const hasConditions = conditions ? {where: conditions} : {};
           return this.postRepository.findAll(hasConditions);
       }
 
-    async findAllByPayloadForNonAdminUsers(conditions: any =null, roleId: number):Promise<Post[]> {
+    /**
+     * get the posts list for non admin users
+     * @param conditions
+     * @param roleId
+     * @return posts array
+     */
+      async findAllByPayloadForNonAdminUsers(conditions: any =null, roleId: number):Promise<Post[]> {
         const query = {
             include: [
                 {
@@ -60,7 +66,7 @@ export class PostDal {
     /**
      * Delete post record by given condition
      * @param condition
-     * @returns deleted record details
+     * @returns the count of deleted posts
      */
     async delete(condition: any):Promise<number> {
         return this.postRepository.destroy({where: condition});
