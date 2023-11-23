@@ -12,9 +12,8 @@ export class PostDal {
      * @param conditions
      * @return posts object array
      */
-      async findAllByPayload(conditions: any = null):Promise<Post[]> {
-        const hasConditions = conditions ? {where: conditions} : {};
-          return this.postRepository.findAll(hasConditions);
+      async findAllByPayload(conditions: any = {}):Promise<Post[]> {
+          return this.postRepository.findAll(conditions);
       }
 
     /**
@@ -23,8 +22,9 @@ export class PostDal {
      * @param roleId
      * @return posts array
      */
-      async findAllByPayloadForNonAdminUsers(conditions: any =null, roleId: number):Promise<Post[]> {
-        const query = {
+      async findAllByPayloadForNonAdminUsers(conditions: any ={}, roleId: number):Promise<Post[]> {
+        return this.postRepository.findAll({
+            where: conditions,
             include: [
                 {
                     model: User,
@@ -35,23 +35,7 @@ export class PostDal {
                 }
             ],
             attributes: ['id', 'title', 'content']
-        };
-        const hasConditions = conditions
-            ? {
-                where: conditions,
-                    include: [
-                      {
-                        model: User,
-                        where: {
-                          role_id: roleId
-                        },
-                        attributes: []
-                      }
-                    ],
-                attributes: ['id', 'title', 'content']
-            }
-            : query;
-        return this.postRepository.findAll(hasConditions);
+        });
     }
 
     /**

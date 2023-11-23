@@ -72,9 +72,9 @@ export class PostsService {
     async getPosts(role : string): Promise<Post[]> {
         try {
             if(role === Role.Admin){
-                return await this.postDal.findAllByPayload({});
+                return await this.postDal.findAllByPayload();
             }if(role=== Role.Manager){
-                return await this.postDal.findAllByPayloadForNonAdminUsers(null, 2 )
+                return await this.postDal.findAllByPayloadForNonAdminUsers({},2 )
             }else{
                 return [];
             }

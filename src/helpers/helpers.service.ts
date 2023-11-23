@@ -35,7 +35,7 @@ export class HelpersService {
      * Verify JWT web token
      * @param token
      */
-    public async verifyJWTWebToken(token: any) {
+    public async verifyJWTWebToken(token: any):Promise<any[]> {
         try {
             const refactoredToken = token ? token.replace("Bearer ", "") : "";
             const response = jwt.verify(refactoredToken, this.configService.get<string>("ROLE_TOKEN_SECRET"));
