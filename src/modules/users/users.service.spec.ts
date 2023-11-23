@@ -3,13 +3,13 @@ import {Test, TestingModule} from "@nestjs/testing";
 import {ConfigService} from "@nestjs/config";
 import * as bcrypt from "bcrypt";
 import {UsersService} from "./users.service";
-import {User} from "../../models/user";
+import {UserProvider} from "./users.provider";
 import {UserDal} from "./users.dal";
+import {User} from "../../models/user";
 import {
     getUserDetailByEmailMockResponse,
     createUserMockBDResponse
 } from "../../../test/references/services/user";
-import {UserProvider} from "./users.provider";
 import {HelpersService} from "../../helpers/helpers.service";
 
 jest.mock("../../helpers/helpers.service");
