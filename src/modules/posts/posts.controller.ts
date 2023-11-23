@@ -29,7 +29,15 @@ export class PostsController {
     ) {}
 
     /**
+     *
      * Get posts list available for the logged-in user
+     *      This will retrieve posts available for the logged-in user
+     *      Check whether Admin & manager user roles has permissions to access this
+     *
+     * Sample Request
+     *      - Headers
+     *          - Authorization Token
+     *          - Role Token
      * @param request
      * @param response
      * @return array of posts
@@ -42,12 +50,12 @@ export class PostsController {
     @ApiResponse({status: 401, description: "Unauthorized"})
     @ApiResponse({status: 403, description: "Forbidden"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
-    public async getPosts(@Req() request: Request, @Res() response: Response):Promise<object> {
+    public async getPosts(@Req() request: Request, @Res() response: Response):Promise<void> {
         try {
             const roleToken: any = request.headers['role-token'];
             const user: any = await this.helperService.decodeJWTToken(roleToken);
             const posts :Post[] = await this.postsService.getPosts(user.roles[0]);
-            return this.mainsService.sendResponse(
+            this.mainsService.sendResponse(
                 response,
                 ResponseMessages.SUCCESS,
                 posts,
@@ -69,12 +77,21 @@ export class PostsController {
 
     /**
      * Update Post by given post ID
+     *      This will update the post of the given ID
+     *      Check whether Admin & manager user roles has permissions to access this
+     *
+     * Sample Request
+     *      - Headers
+     *          - Authorization Token
+     *          - Role Token
+     *      - params
+     *          - id : PostId <number>
      * @param params
      * @param requestBody
      * @param response
      * @return updated Post
      */
-    //@UseGuards(AuthGuard)
+    @UseGuards(AuthGuard)
     @Roles(Role.Admin, Role.Manager)
     @Patch(":id")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
@@ -86,11 +103,11 @@ export class PostsController {
         @Param() params: UpdatePostParamsDto,
         @Body() requestBody: UpdatePostDto,
         @Res() response: Response
-    ):Promise<object> {
+    ):Promise<void> {
         try {
             const {title, content} = requestBody;
             const updateStatus = await this.postsService.updatePost(params.id, title, content);
-            return this.mainsService.sendResponse(
+            this.mainsService.sendResponse(
                 response,
                 ResponseMessages.SUCCESS,
                 updateStatus,
@@ -112,6 +129,15 @@ export class PostsController {
 
     /**
      * Delete post by given post id
+     *      This will delete the post of the given ID
+     *      Check whether only Admin user role has permissions to access this
+     *
+     * Sample Request
+     *      - Headers
+     *          - Authorization Token
+     *          - Role Token
+     *      - params
+     *          - id : PostId <number>
      * @param request
      * @param params
      * @param response
@@ -122,10 +148,10 @@ export class PostsController {
     @ApiResponse({status: 200, description: "Delete successfully"})
     @ApiResponse({status: 401, description: "Unauthorized"})
     @ApiResponse({status: 500, description: "Internal server error"})
-    public async deletePost(@Req() request: Request, @Param() params: UpdatePostParamsDto, @Res() response: Response):Promise<object> {
+    public async deletePost(@Req() request: Request, @Param() params: UpdatePostParamsDto, @Res() response: Response):Promise<void> {
         try {
             await this.postsService.removePost(params.id);
-            return this.mainsService.sendResponse(
+            this.mainsService.sendResponse(
                 response,
                 ResponseMessages.DELETE_SUCCESS,
                 {},
@@ -134,7 +160,7 @@ export class PostsController {
             );
         } catch (error: any) {
             this.logger.error("Error in post controller: " + error);
-            return this.mainsService.sendResponse(
+            this.mainsService.sendResponse(
                 response,
                 ResponseMessages.INTERNAL_SERVER_ERROR,
                 error,

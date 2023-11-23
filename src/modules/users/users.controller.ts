@@ -19,6 +19,15 @@ export class UsersController {
 
     /**
      * user signup
+     *      This is for user signup
+     *      Check whether user signup has public access
+     *
+     * Sample Request
+     *      - Request Body
+     *          - {
+     *              "email": "test1@gmail.com",
+     *              "password":"abc@123"
+     *            }
      * @param request
      * @param requestBody
      * @param response
@@ -31,13 +40,13 @@ export class UsersController {
     @ApiResponse({status: ResponseCode.DUPLICATE_USER, description: ResponseMessages.USER_ALREADY_EXISTS})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     @Post("signup")
-    async signUp(@Req() request: Request, @Body() requestBody: CreateUserDto, @Res() response: Response): Promise<object> {
+    async signUp(@Req() request: Request, @Body() requestBody: CreateUserDto, @Res() response: Response): Promise<void> {
         try {
             const {email, password} = requestBody;
             const existingUser = await this.usersService.getUserDetailsByEmail(email);
 
             if (existingUser) {
-                return this.mainsService.sendResponse(
+                this.mainsService.sendResponse(
                     response,
                     ResponseMessages.USER_ALREADY_EXISTS,
                     null,
@@ -48,7 +57,7 @@ export class UsersController {
             }
             const signupResponse = await this.usersService.userSignup(email, password);
 
-            return this.mainsService.sendResponse(
+            this.mainsService.sendResponse(
                 response,
                 ResponseMessages.CREATED,
                 signupResponse,
@@ -70,6 +79,15 @@ export class UsersController {
 
     /**
      * user login
+     *      This is for user login
+     *      Check whether user login has public access
+     *
+     * Sample Request
+     *      - Request Body
+     *          - {
+     *              "email": "test1@gmail.com",
+     *              "password":"abc@123"
+     *            }
      * @param req
      * @param requestBody
      * @param response
@@ -81,12 +99,12 @@ export class UsersController {
     @ApiResponse({status: ResponseCode.FORBIDDEN, description: ResponseMessages.USER_NOT_EXISTS})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     @Post("login")
-    async login(@Req() req, @Body() requestBody: UserLoginDto, @Res() response: Response) {
+    async login(@Req() req, @Body() requestBody: UserLoginDto, @Res() response: Response): Promise<void> {
         try {
             const {email, password} = requestBody;
             const existingUser = await this.usersService.getUserDetailsByEmail(email);
             if (!existingUser) {
-                return this.mainsService.sendResponse(
+                this.mainsService.sendResponse(
                     response,
                     ResponseMessages.USER_NOT_EXISTS,
                     null,
@@ -97,7 +115,7 @@ export class UsersController {
             } else {
                 const isPasswordValid = await this.usersService.validateUserPassword(password, existingUser.password);
                 if (!isPasswordValid) {
-                    return this.mainsService.sendResponse(
+                    this.mainsService.sendResponse(
                         response,
                         ResponseMessages.USER_NOT_EXISTS,
                         null,
@@ -107,7 +125,7 @@ export class UsersController {
                     );
                 } else {
                     const signupResponse = await this.usersService.login(email, password, existingUser);
-                    return this.mainsService.sendResponse(
+                    this.mainsService.sendResponse(
                         response,
                         ResponseMessages.SUCCESS,
                         signupResponse,
@@ -131,6 +149,12 @@ export class UsersController {
 
     /**
      * get user role data from authorization token
+     *      This will return user role from the authorization token
+     *      Check whether only logged-in users has permissions to access this
+     *
+     * Sample Request
+     *      - Headers
+     *          - Authorization Token
      * @param request
      * @param response
      * @return user roles array of the user
@@ -145,10 +169,10 @@ export class UsersController {
     @ApiResponse({status: 400, description: "Bad Request"})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     @Get("roles")
-    async getUserData(@Req() request: Request, @Res() response: Response):Promise<object> {
+    async getUserData(@Req() request: Request, @Res() response: Response):Promise<void> {
         try {
             const userRole = await this.usersService.getUserRoleData(request.headers.authorization);
-            return this.mainsService.sendResponse(
+            this.mainsService.sendResponse(
                 response,
                 ResponseMessages.SUCCESS,
                 userRole,
