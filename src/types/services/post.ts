@@ -5,7 +5,7 @@ export type userSignupResponse = {
     }
 }
 
-export type UserLoginResponse = {
+export type userLoginResponse = {
     user: {
         id: number,
         email: string,
