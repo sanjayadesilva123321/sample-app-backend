@@ -19,7 +19,7 @@ export class PostsService {
      */
     async updatePost(id: number, title: string, content: string):Promise<Post> {
         try {
-            const post = await this.postDal.findOne(id);
+            const post: Post = await this.postDal.findOne(id);
             if (!post) {
                 throw new Error("Post not found");
             }

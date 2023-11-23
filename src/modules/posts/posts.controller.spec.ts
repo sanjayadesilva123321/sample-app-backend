@@ -62,8 +62,8 @@ describe("PostsController", () => {
                     'roles':['Admin']
                 }
             ));
-            const result : any=  await postController.getPosts(req, res);
-            expect(result.send).toBeCalledWith({
+            await postController.getPosts(req, res);
+            expect(res.send).toHaveBeenCalledWith({
                 code: ResponseCode.SUCCESS,
                 data: getPostsMockResponse,
                 message: ResponseMessages.SUCCESS,
@@ -89,11 +89,11 @@ describe("PostsController", () => {
             (PostsService.prototype.updatePost as jest.Mock).mockImplementation(async () => (
                 getPostUpdateMockResponse
             ));
-            const updateResponse: any = await postController.update(
+            await postController.update(
                 {id:1002},
                 {title: "title", content:'post content'},    
                 res);
-            expect(updateResponse.send).toBeCalledWith({
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.SUCCESS,
                 data: getPostUpdateMockResponse,
                 message: ResponseMessages.SUCCESS,
@@ -123,11 +123,11 @@ describe("PostsController", () => {
             (PostsService.prototype.removePost as jest.Mock).mockImplementation(async () => (
                 {}
             ));
-            const updateResponse: any = await postController.deletePost(
+            await postController.deletePost(
                 req,
                 {id:1002},   
                 res);
-            expect(updateResponse.send).toBeCalledWith({
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.SUCCESS,
                 data: {},
                 message: ResponseMessages.DELETE_SUCCESS,

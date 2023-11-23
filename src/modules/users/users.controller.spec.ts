@@ -61,8 +61,8 @@ describe("UsersController", () => {
                 userSignupMockResponse
             ));
 
-            const result : any=  await userController.signUp(req,{email:'aa85455@gmail.com', password:'abcf@122'}, res);
-            expect(result.send).toBeCalledWith({
+            await userController.signUp(req,{email:'aa85455@gmail.com', password:'abcf@122'}, res);
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.CREATED,
                 data: userSignupMockResponse,
                 message: ResponseMessages.CREATED,
@@ -75,8 +75,8 @@ describe("UsersController", () => {
                 getUserDetailEmailByMockResponse
             ));
 
-            const result : any=  await userController.signUp(req,{email:'aa85455@gmail.com', password:'abcf@122'}, res);
-            expect(result.send).toBeCalledWith({
+            await userController.signUp(req,{email:'aa85455@gmail.com', password:'abcf@122'}, res);
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.DUPLICATE_USER,
                 data: null,
                 message: ResponseMessages.USER_ALREADY_EXISTS,
@@ -95,7 +95,6 @@ describe("UsersController", () => {
     });
 
     describe('login', () => {
-        const req = mockRequest();
         const res = mockResponse();
 
         it("should login", async () => {
@@ -110,9 +109,9 @@ describe("UsersController", () => {
                 loginUserMockResponse
             ));
 
-            const result : any=  await userController.login(req,{email:'aa4976655@gmail.com', password:'abcf@122'}, res);
+            await userController.login({email:'aa4976655@gmail.com', password:'abcf@122'}, res);
 
-            expect(result.send).toBeCalledWith({
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.SUCCESS,
                 data: loginUserMockResponse,
                 message: ResponseMessages.SUCCESS,
@@ -126,9 +125,9 @@ describe("UsersController", () => {
                 getUserDetailEmailByMockResponseForNoUsers
             ));
 
-            const result : any=  await userController.login(req,{email:'aa4976655@gmail.com', password:'abcf@122'}, res);
+            await userController.login({email:'aa4976655@gmail.com', password:'abcf@122'}, res);
 
-            expect(result.send).toBeCalledWith({
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.USER_NOT_EXISTS,
                 data: null,
                 message: ResponseMessages.USER_NOT_EXISTS,
@@ -144,9 +143,9 @@ describe("UsersController", () => {
 
             (UsersService.prototype.validateUserPassword as jest.Mock).mockImplementation(async () => false);
 
-            const result : any=  await userController.login(req,{email:'aa4976655@gmail.com', password:'abcf@122'}, res);
+            await userController.login({email:'aa4976655@gmail.com', password:'abcf@122'}, res);
 
-            expect(result.send).toBeCalledWith({
+            expect(res.send).toBeCalledWith({
                 code: ResponseCode.USER_NOT_EXISTS,
                 data: null,
                 message: ResponseMessages.USER_NOT_EXISTS,

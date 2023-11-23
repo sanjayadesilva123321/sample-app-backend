@@ -100,7 +100,7 @@ export class UsersController {
     @ApiResponse({status: ResponseCode.FORBIDDEN, description: ResponseMessages.USER_NOT_EXISTS})
     @ApiResponse({status: ResponseCode.INTERNAL_SERVER_ERROR, description: ResponseMessages.INTERNAL_SERVER_ERROR})
     @Post("login")
-    async login(@Req() req, @Body() requestBody: UserLoginDto, @Res() response: Response): Promise<void> {
+    async login(@Body() requestBody: UserLoginDto, @Res() response: Response): Promise<void> {
         try {
             const {email, password} = requestBody;
             const existingUser : User = await this.usersService.getUserDetailsByEmail(email);

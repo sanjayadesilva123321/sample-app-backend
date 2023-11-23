@@ -84,7 +84,7 @@ describe("PostsService", () => {
                     updated_by: null}}));
             Post.update = jest.fn().mockImplementation(() => [1, [{}]]);
 
-            const result = await postsService.updatePost(3, 'aaaa', 'bbbb');
+            const result : Post = await postsService.updatePost(3, 'aaaa', 'bbbb');
             expect(result).toEqual({});
         });
 

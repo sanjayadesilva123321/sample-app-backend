@@ -11,13 +11,8 @@ export class UserDal {
      * @param payload
      * @returns user object
      */
-    async findOne(payload: any) {
-        try {
-            return await this.userRepository.findOne(payload);
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+    async findOne(payload: any):Promise<User> {
+        return this.userRepository.findOne(payload);
     }
 
     /**
@@ -25,7 +20,7 @@ export class UserDal {
      * @param payload
      * @return created user
      */
-    async createUser(payload: any) {
+    async createUser(payload: any) :Promise<User> {
         return this.userRepository.create(payload);
     }
 }
