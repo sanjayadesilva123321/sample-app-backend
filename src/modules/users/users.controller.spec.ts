@@ -7,12 +7,12 @@ import {UsersController} from "./users.controller";
 import {UsersService} from "./users.service";
 import {MainService} from "../../utils/main/main.service";
 import {HelpersService} from "../../helpers/helpers.service";
-import {mockRequest, mockResponse} from "../../helpers/unit.tests/unit.test.mock.helper";
+import {mockRequest, mockResponse} from "../../helpers/unit-tests/unit.test.mock.helper";
 import {ResponseCode} from "../../configs/response.codes";
 import {ResponseMessages} from "../../configs/response.messages";
 import {
     getUserDetailEmailByMockResponse,
-    userSIgnupMockResponse,
+    userSignupMockResponse,
     getUserDetailEmailByMockResponseForNoUsers,
     loginUserMockResponse,
     getUserRoleDataSuccessResponse
@@ -58,13 +58,13 @@ describe("UsersController", () => {
             ));
 
             (UsersService.prototype.userSignup as jest.Mock).mockImplementation(async () => (
-                userSIgnupMockResponse
+                userSignupMockResponse
             ));
 
             const result : any=  await userController.signUp(req,{email:'aa85455@gmail.com', password:'abcf@122'}, res);
             expect(result.send).toBeCalledWith({
                 code: ResponseCode.CREATED,
-                data: userSIgnupMockResponse,
+                data: userSignupMockResponse,
                 message: ResponseMessages.CREATED,
                 success: true,
             });
@@ -76,8 +76,6 @@ describe("UsersController", () => {
             ));
 
             const result : any=  await userController.signUp(req,{email:'aa85455@gmail.com', password:'abcf@122'}, res);
-            console.log('RESULT==========');
-            console.log(result)
             expect(result.send).toBeCalledWith({
                 code: ResponseCode.DUPLICATE_USER,
                 data: null,
@@ -106,9 +104,7 @@ describe("UsersController", () => {
                 getUserDetailEmailByMockResponse
             ));
 
-            (UsersService.prototype.validateUserPassword as jest.Mock).mockImplementation(async () => (
-                true
-            ));
+            (UsersService.prototype.validateUserPassword as jest.Mock).mockImplementation(async () => true);
 
             (UsersService.prototype.login as jest.Mock).mockImplementation(async () => (
                 loginUserMockResponse
@@ -146,9 +142,7 @@ describe("UsersController", () => {
                 getUserDetailEmailByMockResponse
             ));
 
-            (UsersService.prototype.validateUserPassword as jest.Mock).mockImplementation(async () => (
-                false
-            ));
+            (UsersService.prototype.validateUserPassword as jest.Mock).mockImplementation(async () => false);
 
             const result : any=  await userController.login(req,{email:'aa4976655@gmail.com', password:'abcf@122'}, res);
 
@@ -158,14 +152,6 @@ describe("UsersController", () => {
                 message: ResponseMessages.USER_NOT_EXISTS,
                 success: false,
             });
-        });
-
-        it("Exception throw", async () => {
-            // (UsersService.prototype.login as jest.Mock).mockImplementation(() => {
-            //     throw new Error();
-            // });
-            // await userController.login(req, {email:'aa@gmail.com', password:'abc@123'}, res);
-            // expect(res.status).toHaveBeenCalledWith(ResponseCode.INTERNAL_SERVER_ERROR);
         });
 
     });

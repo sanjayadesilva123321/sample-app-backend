@@ -8,7 +8,7 @@ import {ResponseCode} from "../../configs/response.codes";
 import {MainService} from "../../utils/main/main.service";
 import {AuthGuard} from "../../auth/auth.guard";
 import {Roles} from "../../auth/decorators/roles.decorator";
-import { Role } from '../../auth/role.enum';
+import { ROLE } from '../../constant';
 import {HelpersService} from "../../helpers/helpers.service";
 import { Post } from "../../models/post";
 
@@ -43,7 +43,7 @@ export class PostsController {
      * @return array of posts
      */
     @UseGuards(AuthGuard)
-    @Roles(Role.Admin, Role.Manager) 
+    @Roles(ROLE.Admin, ROLE.Manager)
     @Get("")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
     @ApiResponse({status: 400, description: "Bad Request"})
@@ -92,7 +92,7 @@ export class PostsController {
      * @return updated Post
      */
     @UseGuards(AuthGuard)
-    @Roles(Role.Admin, Role.Manager)
+    @Roles(ROLE.Admin, ROLE.Manager)
     @Patch(":id")
     @ApiResponse({status: ResponseCode.SUCCESS, description: ResponseMessages.DATA_FOUND})
     @ApiResponse({status: 400, description: "Bad Request"})
@@ -106,7 +106,7 @@ export class PostsController {
     ):Promise<void> {
         try {
             const {title, content} = requestBody;
-            const updateStatus = await this.postsService.updatePost(params.id, title, content);
+            const updateStatus:Post = await this.postsService.updatePost(params.id, title, content);
             this.mainsService.sendResponse(
                 response,
                 ResponseMessages.SUCCESS,
@@ -143,7 +143,7 @@ export class PostsController {
      * @param response
      * @return {} when post deleted successfully
      */
-    @Roles(Role.Admin)
+    @Roles(ROLE.Admin)
     @Delete(":id")
     @ApiResponse({status: 200, description: "Delete successfully"})
     @ApiResponse({status: 401, description: "Unauthorized"})

@@ -6,16 +6,7 @@ import {User} from "../../models/user";
 export class UserDal {
     constructor(@Inject(USER_REPOSITORY) private readonly userRepository: typeof User) {}
 
-    /**
-     * Find all user details by payload
-     * @param payload
-     * @return user list
-     */
-    async findAllByPayload(payload: any) :Promise<User[]> {
-        return await this.userRepository.findAll(payload);
-    }
-
-    /**
+     /**
      * Find user by payload
      * @param payload
      * @returns user object

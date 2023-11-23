@@ -22,10 +22,10 @@ export class AuthGuard implements CanActivate {
      * check the access of the routes
      * if route is public return true
      * @param context
-     * @return boolean
+     * @return Promise<boolean>
      */
     async canActivate(context: ExecutionContext): Promise<boolean> {
-        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+        const isPublic:boolean = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
             context.getHandler(),
             context.getClass(),
         ]);
@@ -33,15 +33,14 @@ export class AuthGuard implements CanActivate {
             return true;
         }
         const request = context.switchToHttp().getRequest();
-        const token = this.extractTokenFromHeader(request);
+        const token:string = this.extractTokenFromHeader(request);
         if (!token) {
             throw new UnauthorizedException();
         }
         try {
-            const payload = await this.jwtService.verifyAsync(token, {
+            request["user"] = await this.jwtService.verifyAsync(token, {
                 secret: this.configService.get<string>("JWT_SECRET_KEY"),
             });
-            request["user"] = payload;
         } catch {
             throw new UnauthorizedException();
         }

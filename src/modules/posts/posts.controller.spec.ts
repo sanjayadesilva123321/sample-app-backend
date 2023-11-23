@@ -1,13 +1,13 @@
 import {Logger} from "@nestjs/common";
 import {Test, TestingModule} from "@nestjs/testing";
 import {JwtService} from "@nestjs/jwt";
-import {beforeEach, describe, expect} from "@jest/globals";
 import {ConfigService} from "@nestjs/config";
+import {beforeEach, describe, expect} from "@jest/globals";
 import {PostsController} from "./posts.controller";
 import {PostsService} from "./posts.service";
 import {MainService} from "../../utils/main/main.service";
 import {HelpersService} from "../../helpers/helpers.service";
-import {mockRequest, mockResponse} from "../../helpers/unit.tests/unit.test.mock.helper";
+import {mockRequest, mockResponse} from "../../helpers/unit-tests/unit.test.mock.helper";
 import {ResponseCode} from "../../configs/response.codes";
 import {ResponseMessages} from "../../configs/response.messages";
 import {
@@ -84,7 +84,7 @@ describe("PostsController", () => {
     describe('updatePost', () => {
         const res = mockResponse();
 
-        it("should update post titile and content", async () => {
+        it("should update post title and content", async () => {
 
             (PostsService.prototype.updatePost as jest.Mock).mockImplementation(async () => (
                 getPostUpdateMockResponse

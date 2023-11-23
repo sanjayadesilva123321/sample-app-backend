@@ -42,4 +42,4 @@ async function bootstrap() {
     await app.listen(3000);
     console.log("Sample app started at port : " + configService.get("PORT"));
 }
-bootstrap();
+bootstrap().then();

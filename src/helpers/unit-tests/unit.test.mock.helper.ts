@@ -17,7 +17,3 @@ export const mockResponse = () => {
     res.json = jest.fn().mockReturnValue(res);
     return res;
 };
-
-export const mockNextFunction = () => {
-    return jest.fn();
-};

@@ -13,8 +13,4 @@ export const createUserMockBDResponse =  {
   id: '20008',
   email: 'aa4976657@gmail.com',
   password: '$2b$10$6U66OPed9VHTNZWROs8MSOUVcG6NfugPfa1ocMHxVHJaLkvO/syDi',
-  // updatedAt: 2023-11-12T15:13:22.198Z,
-  // createdAt: 2023-11-12T15:13:22.198Z
 }}
-
-export const getUserRoleResponse =['Manager']

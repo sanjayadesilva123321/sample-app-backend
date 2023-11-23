@@ -7,7 +7,6 @@ import {PostsModule} from "./modules/posts/posts.module";
 import {UsersModule} from "./modules/users/users.module";
 import {HelpersModule} from "./helpers/helpers.module";
 import {UtilsModule} from "./utils/utils.module";
-import {AuthModule} from "./auth/auth.module";
 import {AuthGuard} from "./auth/auth.guard";
 import {RolesGuard} from "./auth/roles.guard";
 @Module({
@@ -18,7 +17,6 @@ import {RolesGuard} from "./auth/roles.guard";
         DatabaseModule,
         PostsModule,
         UsersModule,
-        AuthModule,
         HelpersModule,
         UtilsModule
     ],

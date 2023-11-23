@@ -1,6 +1,6 @@
 import {Injectable, Logger} from "@nestjs/common";
-import { jwtDecode } from "jwt-decode";
 import {ConfigService} from "@nestjs/config";
+import { jwtDecode } from "jwt-decode";
 import jwt = require("jsonwebtoken");
 
 @Injectable()
@@ -14,10 +14,11 @@ export class HelpersService {
     /**
      * Decode JWT Code and get Values
      * @param token
+     * @return decoded token or null
      */
     public async decodeJWTToken(token: string | undefined) :Promise<string> {
         try {
-            const refactoredToken = token ? token.replace("Bearer ", "") : "";
+            const refactoredToken :string = token ? token.replace("Bearer ", "") : "";
             if (refactoredToken === "") {
                 return null;
             } else {
@@ -34,6 +35,7 @@ export class HelpersService {
     /**
      * Verify JWT web token
      * @param token
+     * @return array jwtPayload or error
      */
     public async verifyJWTWebToken(token: any):Promise<any[]> {
         try {

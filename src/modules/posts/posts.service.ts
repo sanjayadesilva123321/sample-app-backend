@@ -1,7 +1,7 @@
 import {Injectable, Logger} from "@nestjs/common";
 import {PostDal} from "./posts.dal";
 import {Post} from "../../models/post";
-import {Role} from '../../auth/role.enum'
+import {ROLE} from '../../constant'
 
 @Injectable()
 export class PostsService {
@@ -44,8 +44,9 @@ export class PostsService {
     /**
      * Remove post by Post Id
      * @param id
+     * @return Promise<void>
      */
-    async removePost(id: number) {
+    async removePost(id: number) :Promise<void> {
         try {
             const postData: any = await this.postDal.findOne({
                 where: {
@@ -71,9 +72,9 @@ export class PostsService {
      */
     async getPosts(role : string): Promise<Post[]> {
         try {
-            if(role === Role.Admin){
+            if(role === ROLE.Admin){
                 return await this.postDal.findAllByPayload();
-            }if(role=== Role.Manager){
+            }if(role=== ROLE.Manager){
                 return await this.postDal.findAllByPayloadForNonAdminUsers({},2 )
             }else{
                 return [];

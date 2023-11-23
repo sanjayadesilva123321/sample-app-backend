@@ -13,11 +13,3 @@ export const getPostUpdateMockResponse={
         "created_by": 20003,
         "updated_by": null
 }
-
-export const deletePostMockResponse={
-    "code": 200,
-    "data": {},
-    "message": "Deleted successfully",
-    "success": true
-}
-export const getPostsMockRequestParams = {"roleId":1};

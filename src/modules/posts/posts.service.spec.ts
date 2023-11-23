@@ -14,7 +14,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 describe("PostsService", () => {
-    let postservice: PostsService;
+    let postsService: PostsService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -25,17 +25,17 @@ describe("PostsService", () => {
                 ConfigService, ...PostProvider
             ],
         }).compile();
-        postservice=module.get<PostsService>(PostsService);
+        postsService=module.get<PostsService>(PostsService);
    });
         
     it("should be defined", () => {
-        expect(postservice).toBeDefined();
+        expect(postsService).toBeDefined();
     });
 
     describe("getPosts", () => {
         it("should return an array of posts", async () => {
             Post.findAll = jest.fn().mockReturnValueOnce(getPostsDataDBResponse);
-            const result = await postservice.getPosts('Manager');
+            const result = await postsService.getPosts('Manager');
             expect(result).toEqual(getPostsDataDBResponse);
         });
 
@@ -43,7 +43,7 @@ describe("PostsService", () => {
             Post.findAll = jest.fn().mockImplementation(() => {
                 throw new Error();
             });
-            await expect(postservice.getPosts('Admin')).rejects.toThrowError();
+            await expect(postsService.getPosts('Admin')).rejects.toThrowError();
         });
     });
 
@@ -56,20 +56,20 @@ describe("PostsService", () => {
                     updated_by: null}}));
             Post.destroy = jest.fn().mockImplementation(() => true);
 
-            const result = await postservice.removePost(1002);
+            const result = await postsService.removePost(1002);
             expect(result).toEqual(undefined);
         });
 
         it("should show error when post does not exists", async () => {
             Post.findOne = jest.fn().mockReturnValueOnce(null);
-            await expect(postservice.removePost(1003)).rejects.toThrowError();
+            await expect(postsService.removePost(1003)).rejects.toThrowError();
         });
 
         it("Exception throw", async () => {
             Post.destroy = jest.fn().mockImplementation(() => {
                 throw new Error();
             });
-            await expect(postservice.removePost(1003)).rejects.toThrowError();
+            await expect(postsService.removePost(1003)).rejects.toThrowError();
         });
     });
 
@@ -84,7 +84,7 @@ describe("PostsService", () => {
                     updated_by: null}}));
             Post.update = jest.fn().mockImplementation(() => [1, [{}]]);
 
-            const result = await postservice.updatePost(3, 'aaaa', 'bbbb');
+            const result = await postsService.updatePost(3, 'aaaa', 'bbbb');
             expect(result).toEqual({});
         });
 
@@ -92,7 +92,7 @@ describe("PostsService", () => {
             Post.update = jest.fn().mockImplementation(() => {
                 throw new Error();
             });
-            await expect(postservice.updatePost(postId, 'aaaa', 'bbbb')).rejects.toThrowError();
+            await expect(postsService.updatePost(postId, 'aaaa', 'bbbb')).rejects.toThrowError();
         });
     });
 });

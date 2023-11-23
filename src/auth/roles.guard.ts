@@ -1,11 +1,9 @@
 import {Inject, Injectable, CanActivate, ExecutionContext, UnauthorizedException} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {ROLES_KEY} from "./decorators/roles.decorator";
-import { Role } from './role.enum';
+import { ROLE } from '../constant';
 import {HelpersService} from "../helpers/helpers.service";
 import {MainService} from "../utils/main/main.service";
-// import {ResponseMessages} from "../configs/response.messages";
-// import {ResponseCode} from "../configs/response.codes";
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -25,7 +23,7 @@ export class RolesGuard implements CanActivate {
      * @return true if user role of the logged-in user has access to route
      */
     async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+    const requiredRoles: ROLE[] = this.reflector.getAllAndOverride<ROLE[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);

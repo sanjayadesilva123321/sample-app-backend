@@ -1,5 +1,4 @@
-import {Global, Module} from "@nestjs/common";
-import {Logger} from "@nestjs/common";
+import {Global, Module, Logger} from "@nestjs/common";
 import {HelpersService} from "./helpers.service";
 
 @Global()

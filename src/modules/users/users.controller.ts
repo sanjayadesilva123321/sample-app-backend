@@ -1,12 +1,13 @@
-import {Request, Response} from "express";
 import {Controller, Get, Post, Body, Req, Res, Logger} from "@nestjs/common";
 import {ApiBearerAuth, ApiHeader, ApiResponse, ApiTags} from "@nestjs/swagger";
+import {Request, Response} from "express";
 import {UsersService} from "./users.service";
 import {CreateUserDto, UserLoginDto} from "./dto/user.dto";
 import {ResponseMessages} from "../../configs/response.messages";
 import {ResponseCode} from "../../configs/response.codes";
 import {MainService} from "../../utils/main/main.service";
 import {Public} from "../../auth/decorators/public.decorator";
+import {User} from "../../models/user";
 
 @ApiTags("Users")
 @Controller("users")
@@ -43,7 +44,7 @@ export class UsersController {
     async signUp(@Req() request: Request, @Body() requestBody: CreateUserDto, @Res() response: Response): Promise<void> {
         try {
             const {email, password} = requestBody;
-            const existingUser = await this.usersService.getUserDetailsByEmail(email);
+            const existingUser : User = await this.usersService.getUserDetailsByEmail(email);
 
             if (existingUser) {
                 this.mainsService.sendResponse(
@@ -102,7 +103,7 @@ export class UsersController {
     async login(@Req() req, @Body() requestBody: UserLoginDto, @Res() response: Response): Promise<void> {
         try {
             const {email, password} = requestBody;
-            const existingUser = await this.usersService.getUserDetailsByEmail(email);
+            const existingUser : User = await this.usersService.getUserDetailsByEmail(email);
             if (!existingUser) {
                 this.mainsService.sendResponse(
                     response,

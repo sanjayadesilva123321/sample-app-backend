@@ -1,13 +1,13 @@
-import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
 import {Inject, Injectable, Logger} from "@nestjs/common";
 import {ConfigService} from "@nestjs/config";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 import {UserDal} from "./users.dal";
 import {USER_REPOSITORY} from "../../constant";
 import {User} from "../../models/user";
 import {HelpersService} from "../../helpers/helpers.service";
 import {Role} from "../../models/role";
-import {UserLoginResponse, UserSignupResponse} from "../../types/services/post";
+import {userLoginResponse, userSignupResponse} from "../../types/services/post";
 
 @Injectable()
 export class UsersService {
@@ -43,7 +43,7 @@ export class UsersService {
      * @param password
      * @return object with created user id and email
      */
-    async userSignup(email: string, password: string):Promise<UserSignupResponse> {
+    async userSignup(email: string, password: string):Promise<userSignupResponse> {
         try {
             const hashedPassword : string = await this.hashPassword(password);
             const user : User = await this.create(email, hashedPassword);
@@ -128,11 +128,11 @@ export class UsersService {
      * @param password
      * @param existingUser
      */
-    async login(email: string, password: string, existingUser: User):Promise<UserLoginResponse> {
+    async login(email: string, password: string, existingUser: User):Promise<userLoginResponse> {
         try {
-            const token = this.generateToken(existingUser);
-            const userRoles = await this.getUserRoles(existingUser.role_id);
-            const roleToken = this.generateRoleToken(existingUser, userRoles);
+            const token: string = this.generateToken(existingUser);
+            const userRoles : string[] = await this.getUserRoles(existingUser.role_id);
+            const roleToken : string = this.generateRoleToken(existingUser, userRoles);
             return {
                 user: {
                     id: existingUser.id,
@@ -166,12 +166,12 @@ export class UsersService {
 
     /**
      * get user role data from auth token
-     * @param authtoken
+     * @param authToken
      * @return array of user roles
      */
-    async getUserRoleData(authtoken: string): Promise<string[]> {
-        const user: any = await this.helperService.decodeJWTToken(authtoken);
-        const roles = await Role.findAll({
+    async getUserRoleData(authToken: string): Promise<string[]> {
+        const user: any = await this.helperService.decodeJWTToken(authToken);
+        const roles : Role[] = await Role.findAll({
             include: [
               {
                 model: User,
@@ -193,7 +193,7 @@ export class UsersService {
      * @return userRole array
      */
     async getUserRoles(role_id: number): Promise<string[]> {
-        const role = await Role.findOne({
+        const role :Role = await Role.findOne({
             where: {id:role_id},
         });
         return [role.role];

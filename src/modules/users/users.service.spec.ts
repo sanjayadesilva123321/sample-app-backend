@@ -18,7 +18,7 @@ beforeEach(() => {
     jest.clearAllMocks();
 });
 describe("UsersService", () => {
-    let userservice: UsersService;
+    let usersService: UsersService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -30,17 +30,17 @@ describe("UsersService", () => {
                 ConfigService, ...UserProvider
             ],
         }).compile();
-        userservice=module.get<UsersService>(UsersService);
+        usersService=module.get<UsersService>(UsersService);
    });
         
     it("should be defined", () => {
-        expect(userservice).toBeDefined();
+        expect(usersService).toBeDefined();
     });
 
     describe("create user", () => {
         it("create user", async () => {
             User.create = jest.fn().mockResolvedValue(createUserMockBDResponse);
-            const result = await userservice.create("aa@gmail.com","abc@123");
+            const result : User = await usersService.create("aa@gmail.com","abc@123");
             expect(result).toEqual(createUserMockBDResponse);
         });
 
@@ -48,14 +48,14 @@ describe("UsersService", () => {
             User.create = jest.fn().mockImplementation(() => {
                 throw new Error();
             });
-            await expect(userservice.create("aa@gmail.com","abc@123")).rejects.toThrowError();
+            await expect(usersService.create("aa@gmail.com","abc@123")).rejects.toThrowError();
         });
     });
 
     describe("getUserDetailsByEmail", () => {
         it("should return user details by email", async () => {
             User.findOne = jest.fn().mockReturnValueOnce(getUserDetailByEmailMockResponse);
-            const result = await userservice.getUserDetailsByEmail('aa4976655@gmail.com');
+            const result : User = await usersService.getUserDetailsByEmail('aa4976655@gmail.com');
             expect(result).toEqual(getUserDetailByEmailMockResponse);
         });
 
@@ -63,7 +63,7 @@ describe("UsersService", () => {
             User.findOne = jest.fn().mockImplementation(() => {
                 throw new Error();
             });
-            await expect(userservice.getUserDetailsByEmail('aa4976655@gmail.com')).rejects.toThrowError();
+            await expect(usersService.getUserDetailsByEmail('aa4976655@gmail.com')).rejects.toThrowError();
         });
     });
 
@@ -72,7 +72,7 @@ describe("UsersService", () => {
             const plainPassword = 'myPassword';
             const hashedPassword = await bcrypt.hash(plainPassword, 10);
         
-            const result = await userservice.validateUserPassword(plainPassword, hashedPassword);
+            const result = await usersService.validateUserPassword(plainPassword, hashedPassword);
         
             expect(result).toBe(true);
         });
@@ -82,48 +82,18 @@ describe("UsersService", () => {
             const anotherPassword = 'anotherPassword';
             const hashedPassword = await bcrypt.hash(plainPassword, 10);
         
-            const result = await userservice.validateUserPassword(anotherPassword, hashedPassword);
+            const result = await usersService.validateUserPassword(anotherPassword, hashedPassword);
         
             expect(result).toBe(false);
           });
     });
 
-    // describe("get user role data", () => {
-    //     it("should return user roles", async () => {
-    //         (HelpersService.prototype.decodeJWTToken as jest.Mock).mockImplementation(async () => (
-    //             {
-    //                 id: '20004',
-    //                 username: 'aa4977@gmail.com',
-    //                 iat: 1699526134,
-    //                 exp: 1699529734
-    //               }
-    //         ));
-
-    //         User.findOne = jest.fn().mockReturnValueOnce(getUserDetailByEmailMockResponse);
-    //         const result = await userservice.getUserDetailsByEmail('aa4976655@gmail.com');
-    //         expect(result).toEqual(getUserDetailByEmailMockResponse);
-    //     });
-
-    //     it("Exception throw", async () => {
-    //         User.findOne = jest.fn().mockImplementation(() => {
-    //             throw new Error();
-    //         });
-    //         await expect(userservice.getUserDetailsByEmail('aa4976655@gmail.com')).rejects.toThrowError();
-    //     });
-    // });
-
     describe("login", () => {
-        // it("should return user details of logged in user", async () => {
-        //     User.findOne = jest.fn().mockReturnValueOnce(getUserDetailByEmailMockResponse);
-        //     const result = await userservice.getUserDetailsByEmail('aa4976655@gmail.com');
-        //     expect(result).toEqual(getUserDetailByEmailMockResponse);
-        // });
-
         it("Exception throw", async () => {
             User.findOne = jest.fn().mockImplementation(() => {
                 throw new Error();
             });
-            await expect(userservice.getUserDetailsByEmail('aa4976655@gmail.com')).rejects.toThrowError();
+            await expect(usersService.getUserDetailsByEmail('aa4976655@gmail.com')).rejects.toThrowError();
         });
     });
 
